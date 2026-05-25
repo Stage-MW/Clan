@@ -191,8 +191,6 @@
 
         /* Виджет обратного отсчета тренировки */
         .training-countdown-widget { display: none; width: 100%; max-width: 500px; background: rgba(2, 5, 10, 0.9); border: 2px solid #00f2fe; box-shadow: 0 0 25px rgba(0, 242, 254, 0.35); padding: 20px; border-radius: 8px; margin: 0 auto 25px; text-align: center; font-family: 'Orbitron', sans-serif; position: relative; }
-        
-        /* ИЗМЕНЕНО: Кнопка закрытия таймера (крестик в углу виджета) */
         .close-timer-btn { display: none; position: absolute; top: 8px; right: 14px; color: rgba(255, 255, 255, 0.3); font-size: 20px; cursor: pointer; transition: color 0.2s; font-family: sans-serif; font-weight: bold; }
         .close-timer-btn:hover { color: #ff0055; }
         
@@ -202,7 +200,6 @@
         .timer-unit-box .num { font-size: 20px; color: #fff; font-weight: 900; text-shadow: 0 0 10px #00f2fe; }
         .timer-unit-box .lbl { font-size: 9px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; font-family: 'Oswald', sans-serif; }
 
-        /* ИЗМЕНЕНО: Стили списков «Кто пойдет / не пойдет» внутри виджета на сайте */
         .training-attendance-container { display: flex; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); font-family: 'Oswald', sans-serif; text-align: left; }
         .attendance-column { flex: 1; background: rgba(2, 5, 10, 0.5); padding: 10px; border-radius: 4px; font-size: 13px; }
         .attendance-column h4 { font-family: 'Orbitron', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
@@ -626,12 +623,18 @@
     </div>
 
     <div class="modal-overlay" id="trainingModalOverlay" style="z-index: 150;">
-        <div class="modal-window" style="max-width: 400px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);">
+        <div class="modal-window" style="max-width: 420px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);">
             <span class="close-btn" id="closeTrainingModalBtn">&times;</span>
             <div class="modal-title" style="color: #a855f7; border-bottom-color: rgba(168, 85, 247, 0.2);">Планирование тренировки</div>
-            <div class="form-group">
-                <label>Выберите дату и время начала события</label>
-                <input type="datetime-local" id="inputTrainingDateTime" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif;">
+            <div class="form-group" style="display: flex; gap: 12px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px;">Выберите дату</label>
+                    <input type="date" id="inputTrainingDate" required style="width: 100%; background: #02050a; border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px; color: #fff; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px;">Напишите время</label>
+                    <input type="time" id="inputTrainingTime" required style="width: 100%; background: #02050a; border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px; color: #fff; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px;">
+                </div>
             </div>
             <button type="button" class="btn-submit" id="btnSubmitTraining" style="background: #a855f7; color: #fff;">Готово</button>
         </div>
@@ -730,6 +733,8 @@
         const TG_CHAT_ID = "-1002619697984"; 
         const TG_THREAD_ID = 5264;          
         const CLAN_ID = "250489";
+        
+        // ИЗМЕНЕНО: Для стабильной отправки топику "1" (Болталка) мы принудительно парсим его в числовой тип данных
         const TRAINING_THREAD_ID = 1;
 
         const BIN_ID = "6a12294c6877513b27c06650"; 
@@ -808,7 +813,8 @@
 
         const btnTrainingTrigger = document.getElementById('btnTrainingTrigger');
         const btnSubmitTraining = document.getElementById('btnSubmitTraining');
-        const inputTrainingDateTime = document.getElementById('inputTrainingDateTime');
+        const inputTrainingDate = document.getElementById('inputTrainingDate');
+        const inputTrainingTime = document.getElementById('inputTrainingTime');
         const trainingCountdownWidget = document.getElementById('trainingCountdownWidget');
         const btnCloseTimer = document.getElementById('btnCloseTimer');
 
@@ -823,7 +829,6 @@
         let currentParsedData = null;
         let countdownIntervalId = null;
         
-        // ИЗМЕНЕНО: База данных теперь содержит массивы для отслеживания явки (trainingYes / trainingNo)
         let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
 
@@ -1037,7 +1042,6 @@
             }
             
             renderLocalRecruits();
-            // ИЗМЕНЕНО: Также перерисовываем списки присутствия, чтобы аватарка обновилась и там
             renderAttendanceListsOnSite();
         }
 
@@ -1112,31 +1116,40 @@
         });
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
+        // ИЗМЕНЕНО: При открытии планировщика дата стартует строго с сегодняшнего дня
         btnTrainingTrigger.addEventListener('click', () => {
             if(!isLeaderMode) return;
-            inputTrainingDateTime.value = "";
+            
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            
+            inputTrainingDate.value = `${yyyy}-${mm}-${dd}`;
+            inputTrainingTime.value = "18:00"; 
+            
             trainingModalOverlay.classList.add('active');
         });
         closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: Добавлены инлайн-кнопки «Приду» / «Не могу» к сообщению бота
         btnSubmitTraining.addEventListener('click', async () => {
-            const dateTimeVal = inputTrainingDateTime.value;
-            if(!dateTimeVal) { alert("Пожалуйста, укажите дату и время!"); return; }
+            // ИЗМЕНЕНО: Парсинг раздельных значений даты и времени
+            const dateVal = inputTrainingDate.value;
+            const timeVal = inputTrainingTime.value;
+            if(!dateVal || !timeVal) { alert("Пожалуйста, укажите дату и время!"); return; }
 
-            const targetTimestamp = new Date(dateTimeVal).getTime();
+            const targetTimestamp = new Date(`${dateVal}T${timeVal}`).getTime();
             if(targetTimestamp <= Date.now()) { alert("Нельзя спланировать тренировку в прошлом!"); return; }
 
             btnSubmitTraining.textContent = "Отправка в чат...";
             btnSubmitTraining.disabled = true;
 
-            const formattedDate = new Date(dateTimeVal).toLocaleString('ru-RU', {
+            const formattedDate = new Date(`${dateVal}T${timeVal}`).toLocaleString('ru-RU', {
                 day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
             const messageText = `⚔️ <b>ВНИМАНИЕ, ФЛОТ STAGE! Назначена тренировка!</b>\n\n⚓️ <b>Событие:</b> Тактическая командная тренировка\n📅 <b>Время сбора:</b> ${formattedDate}\n\nВсем участникам быть в полной боевой готовности на тактической доске сайта! Прямая связь в Яндекс Телемост. 🚢🔥`;
 
-            // Генерируем кнопки для голосования в Telegram
             const replyMarkupButtons = {
                 inline_keyboard: [
                     [
@@ -1147,19 +1160,19 @@
             };
 
             try {
+                // ИЗМЕНЕНО: message_thread_id принудительно обернут в Number() для стабильного нацеливания на форум-топик Болталки
                 await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         chat_id: TG_CHAT_ID, 
-                        message_thread_id: TRAINING_THREAD_ID, 
+                        message_thread_id: Number(TRAINING_THREAD_ID), 
                         text: messageText, 
                         parse_mode: 'html',
-                        reply_markup: replyMarkupButtons // Прикрепляем кнопки
+                        reply_markup: replyMarkupButtons 
                     })
                 });
 
-                // Сбрасываем старые списки голосования при создании новой тренировки
                 cloudDatabase.trainingTime = targetTimestamp;
                 cloudDatabase.trainingYes = [];
                 cloudDatabase.trainingNo = [];
@@ -1177,7 +1190,6 @@
             }
         });
 
-        // ИЗМЕНЕНО: Новая функция «Закрыть таймер» для полного удаления события из базы данных
         window.executeResetTrainingTimer = async function() {
             if(!isLeaderMode) return;
             if(confirm("Вы действительно хотите отменить текущую тренировку и полностью удалить таймер с сайта?")) {
@@ -1192,14 +1204,11 @@
             }
         }
 
-        // ИЗМЕНЕНО: Отрисовка списков пришедших/непришедших бойцов на сайте внутри виджета
         function renderAttendanceListsOnSite() {
             const yesListElement = document.getElementById('attendanceYesList');
             const noListElement = document.getElementById('attendanceNoList');
 
-            // Заполняем дефолтными данными Mitso, Joker и т.д. для демонстрации, если списки пусты
             if(cloudDatabase.trainingYes.length === 0 && cloudDatabase.trainingNo.length === 0) {
-                // Если база чистая — выводим заглушку
                 yesListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>`;
                 noListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>`;
                 return;
@@ -1211,10 +1220,8 @@
             if(cloudDatabase.trainingYes.length === 0) yesListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.1);">Никто не записался</div>`;
             if(cloudDatabase.trainingNo.length === 0) noListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.1);">Никто не записался</div>`;
 
-            // Рендерим тех, кто идет
             cloudDatabase.trainingYes.forEach(userNick => {
                 let avaUrl = "";
-                // Ищем аватарку пользователя по нику в метаданных
                 for(let k in cloudDatabase.metadata) {
                     if(cloudDatabase.metadata[k].nick === userNick && cloudDatabase.metadata[k].avatar) {
                         avaUrl = cloudDatabase.metadata[k].avatar;
@@ -1227,7 +1234,6 @@
                 yesListElement.appendChild(item);
             });
 
-            // Рендерим тех, кто не идет
             cloudDatabase.trainingNo.forEach(userNick => {
                 let avaUrl = "";
                 for(let k in cloudDatabase.metadata) {
@@ -1253,12 +1259,10 @@
 
             trainingCountdownWidget.style.display = 'block';
             
-            // ИЗМЕНЕНО: Показываем кнопку закрытия таймера только Главе клана
             if(isLeaderMode) {
                 btnCloseTimer.style.display = 'block';
             }
 
-            // Отрисовываем списки присутствия
             renderAttendanceListsOnSite();
 
             function updateTimer() {
@@ -1299,7 +1303,7 @@
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
                 activateLeaderMode(); unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
-                initTrainingCountdown(); // Перезапускаем таймер, чтобы появилась кнопка закрытия
+                initTrainingCountdown(); 
                 return;
             }
 
@@ -1353,7 +1357,7 @@
         function activateLeaderMode() {
             isLeaderMode = true; adminBadge.style.display = 'block'; navStatsBtn.style.display = 'block'; 
             btnTrainingTrigger.style.display = 'block'; 
-            if(btnCloseTimer) btnCloseTimer.style.display = 'block'; // Показываем крестик закрытия админу
+            if(btnCloseTimer) btnCloseTimer.style.display = 'block'; 
             navLoginBtn.innerHTML = `<i class="fa-solid fa-user-gear" style="color:#ff0055;"></i> Админ`;
             navLoginBtn.style.background = "rgba(255, 0, 85, 0.15)"; navLoginBtn.style.borderColor = "#ff0055";
             document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block');
