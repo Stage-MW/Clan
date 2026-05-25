@@ -65,6 +65,25 @@
         #navMapsLink, #navBoardLink { color: #a855f7; }
         #navMapsLink:hover, #navBoardLink:hover { color: #c084fc; text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
         #navStatsBtn { display: none; color: #eab308; }
+        
+        /* ИЗМЕНЕНО: Стили кнопки ЛК превращены в круглую иконку-аватарку в меню */
+        #navCabinetBtn { 
+            display: none; 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
+            border: 2px solid #a855f7; 
+            background: #02050a; 
+            cursor: pointer; 
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.5); 
+            transition: all 0.3s; 
+            background-size: cover; 
+            background-position: center;
+            text-align: center;
+            line-height: 28px;
+        }
+        #navCabinetBtn i { color: #a855f7; font-size: 14px; }
+        #navCabinetBtn:hover { border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.8); transform: scale(1.1); }
 
         .btn-nav-login {
             background: rgba(0, 136, 204, 0.15);
@@ -132,6 +151,35 @@
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(45px, 10vw, 110px); font-weight: 900; letter-spacing: clamp(6px, 1.5vw, 18px); text-transform: uppercase; color: #ffffff; animation: bulbFlicker 3s ease-in-out infinite; text-align: center; }
 
+        .welcome-desc-container {
+            max-width: 700px;
+            width: 100%;
+            margin-top: 25px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(0, 242, 254, 0.1);
+            padding: 20px 25px;
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .welcome-desc-p {
+            font-size: clamp(13px, 3.5vw, 15px);
+            line-height: 1.6;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .welcome-desc-p:last-child {
+            margin-bottom: 0;
+            color: #00f2fe;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
         @keyframes bulbFlicker {
             0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 35px rgba(0, 242, 254, 0.9), 0 0 15px rgba(0, 242, 254, 0.4); color: #ffffff; }
             19%, 24%, 55% { opacity: 0.2; text-shadow: none; color: #1e293b; }
@@ -147,12 +195,16 @@
         .rank-section { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.2); padding: 25px; border-radius: 6px; backdrop-filter: blur(5px); position: relative; width: 100%; }
         .rank-title { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 20px); color: #00f2fe; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; text-align: center; border-bottom: 1px dashed rgba(0, 242, 254, 0.2); padding-bottom: 10px; }
         
+        /* ИЗМЕНЕНО: Добавлены стили для вывода мини-аватарок участников в общем списке */
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
         .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; }
+        .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
+        .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
-        .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; }
+        .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
 
-        .kick-btn { display: none; color: #ff0055; cursor: pointer; font-size: 16px; margin-left: 10px; transition: transform 0.2s; }
+        .kick-btn { display: none; color: #ff0055; cursor: pointer; font-size: 16px; margin-left: 10px; transition: transform 0.2s; flex-shrink: 0; }
         .kick-btn:hover { transform: scale(1.3); text-shadow: 0 0 10px #ff0055; }
         #adminBadge { display: none; text-align: center; font-family: 'Orbitron', sans-serif; color: #ff0055; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; text-shadow: 0 0 10px #ff0055; }
 
@@ -202,7 +254,6 @@
         .btn-map-download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(0, 242, 254, 0.1); border: 1px solid #00f2fe; color: #00f2fe; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 4px; transition: all 0.3s; }
         .btn-map-download:hover { background: #00f2fe; color: #02050a; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
 
-        /* Кнопка мгновенной отправки карты на доску */
         .btn-map-copy { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; color: #a855f7; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; border-radius: 4px; transition: all 0.3s; cursor: pointer; margin-top: -4px; }
         .btn-map-copy:hover { background: #a855f7; color: #ffffff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
 
@@ -250,6 +301,24 @@
         .founder-tile p { color: #00f2fe; font-size: 13px; text-transform: uppercase; font-weight: bold; }
         .founder-link:hover .founder-tile { transform: translateY(-8px); border-color: #00f2fe; box-shadow: 0 15px 40px rgba(0, 242, 254, 0.3); }
 
+        /* СТИЛИ ЛИЧНОГО КАБИНЕТА */
+        .cabinet-profile-box { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 10px; }
+        .cabinet-avatar-container { position: relative; width: 110px; height: 110px; border-radius: 50%; border: 3px solid #a855f7; background: #02050a; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(168, 85, 247, 0.4); overflow: hidden; background-size: cover; background-position: center; }
+        .cabinet-avatar-container i { font-size: 55px; color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+        
+        .avatar-picker-title { font-size: 11px; text-transform: uppercase; color: #a855f7; letter-spacing: 1px; margin-top: 5px; text-align: center; width: 100%; }
+        .avatar-picker-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; width: 100%; background: rgba(2, 5, 10, 0.4); padding: 8px; border-radius: 6px; border: 1px dashed rgba(168, 85, 247, 0.3); }
+        .avatar-picker-item { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 2px solid transparent; background-size: cover; background-position: center; cursor: pointer; transition: all 0.2s ease; background-color: #02050a; }
+        .avatar-picker-item:hover { transform: scale(1.1); border-color: #00f2fe; }
+        .avatar-picker-item.selected { border-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
+
+        .cabinet-info-list { width: 100%; display: flex; flex-direction: column; gap: 10px; background: rgba(2, 5, 10, 0.6); padding: 15px; border-radius: 6px; border: 1px solid rgba(168, 85, 247, 0.2); }
+        .cabinet-info-item { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 6px; }
+        .cabinet-info-item:last-child { border: none; padding: 0; }
+        .cabinet-info-item .lbl { color: #94a3b8; text-transform: uppercase; font-size: 12px; }
+        .cabinet-info-item .val { font-weight: bold; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 13px; }
+        .cabinet-info-item .val.rank-highlight { color: #00f2fe; text-shadow: 0 0 10px rgba(0, 242, 254, 0.4); font-size: 14px; }
+
         /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay { position: fixed; inset: 0; background: rgba(1, 4, 10, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 15px; }
         .modal-overlay.active { display: flex; }
@@ -274,7 +343,6 @@
         .success-result { display: none; text-align: center; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
         .stats-item { background: #02050a; border: 1px solid rgba(168, 85, 247, 0.3); padding: 12px; border-radius: 4px; text-align: center; }
         .stats-item .num { font-family: 'Orbitron', sans-serif; font-size: 26px; color: #a855f7; font-weight: 900; text-shadow: 0 0 10px rgba(168,85,247,0.4); }
         .stats-item .label { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 3px; letter-spacing: 0.5px; }
@@ -291,9 +359,11 @@
             .nav-links-right { gap: 6px; padding-left: 6px; }
             .nav-bar a, .nav-bar span.nav-link-btn { font-size: 8px; letter-spacing: 0.3px; }
             .btn-nav-login { padding: 4px 10px; font-size: 9px; }
+            #navCabinetBtn { width: 26px; height: 26px; line-height: 22px; }
+            #navCabinetBtn i { font-size: 11px; }
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { padding: 60px 10px 80px; background-attachment: scroll; }
             
-            /* ЧИНИМ СЕТКУ УЧАСТНИКОВ НА ТЕЛЕФОНЕ (Убран жесткий grid-template-columns с display:none, заменено на гибкий flex/flex-wrap) */
+            /* ЧИНИМ СЕТКУ УЧАСТНИКОВ НА ТЕЛЕФОНЕ */
             .players-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
             .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; height: auto !important; }
             .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
@@ -304,6 +374,8 @@
             .board-container.fullscreen-active { height: 100vh; }
             .stats-grid { grid-template-columns: 1fr; }
             .founders-grid { grid-template-columns: 1fr; }
+            
+            .welcome-desc-container { padding: 15px; margin-top: 15px; }
         }
     </style>
 </head>
@@ -321,6 +393,7 @@
         <div class="nav-links-right">
             <span class="nav-link-btn" id="navLawBtn">Соглашение</span>
             <span class="nav-link-btn" id="navStatsBtn"><i class="fa-solid fa-chart-simple"></i> Статистика</span>
+            <div id="navCabinetBtn" title="Личный кабинет"><i class="fa-solid fa-user-shield" id="navCabinetDefaultIcon"></i></div>
             <button class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Вход</button>
         </div>
     </nav>
@@ -328,6 +401,14 @@
     <section id="welcome" class="welcome-screen">
         <div class="welcome-text">Welcome to</div>
         <h1>Stage</h1>
+        
+        <div class="welcome-desc-container">
+            <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой arena.</p>
+            <p class="welcome-desc-p">Мы — объединение сильнейших игроков, профессионалов своего дела и настоящих фанатов Modern Warships.</p>
+            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 и Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
+            <p class="welcome-desc-p">Здесь ценятся скилл, дисциплина, командная игра и стремление быть лучшими.</p>
+            <p class="welcome-desc-p">STAGE — это не просто клан. Это место, где рождаются победы.</p>
+        </div>
     </section>
 
     <section id="roster" class="roster-screen">
@@ -339,28 +420,28 @@
             <div class="rank-section">
                 <div class="rank-title">Участники клана</div>
                 <div class="players-grid" id="playersGrid">
-                    <div class="player-card leader" data-nick="Mitso"><span>Mitso</span><span class="tag">Глава</span></div>
-                    <div class="player-card" data-nick="Mr. JOKER"><span>Mr. JOKER</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. JOKER')"></i></div>
-                    <div class="player-card" data-nick="Dark Control"><span>Dark Control</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Dark Control')"></i></div>
-                    <div class="player-card" data-nick="Mr. PROper Twelve"><span>Mr. PROper Twelve</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. PROper Twelve')"></i></div>
-                    <div class="player-card" data-nick="Banan"><span>Banan</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Banan')"></i></div>
-                    <div class="player-card" data-nick="Milarez"><span>Milarez</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Milarez')"></i></div>
-                    <div class="player-card" data-nick="so tedious"><span>so tedious</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'so tedious')"></i></div>
-                    <div class="player-card" data-nick="NEPTYN B MORE"><span>NEPTYN B MORE</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'NEPTYN B MORE')"></i></div>
-                    <div class="player-card" data-nick="anubis_desert"><span>anubis_desert</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'anubis_desert')"></i></div>
-                    <div class="player-card" data-nick="Zandetetor"><span>Zandetetor</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Zandetetor')"></i></div>
-                    <div class="player-card" data-nick="AERA"><span>AERA</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'AERA')"></i></div>
-                    <div class="player-card" data-nick="Maevrikk"><span>Maevrikk</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Maevrikk')"></i></div>
-                    <div class="player-card" data-nick="S.H.A.M.S.U.D.I.N"><span>S.H.A.M.S.U.D.I.N</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'S.H.A.M.S.U.D.I.N')"></i></div>
-                    <div class="player-card" data-nick="dragen"><span>dragen</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'dragen')"></i></div>
-                    <div class="player-card" data-nick="vindshtormy"><span>vindshtormy</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'vindshtormy')"></i></div>
-                    <div class="player-card" data-nick="Hangman"><span>Hangman</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Hangman')"></i></div>
-                    <div class="player-card" data-nick="[IQ]"><span>[IQ]</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '[IQ]')"></i></div>
-                    <div class="player-card" data-nick="IMRAN"><span>IMRAN</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'IMRAN')"></i></div>
-                    <div class="player-card" data-nick="ƤUϻΛ"><span>ƤUϻΛ</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'ƤUϻΛ')"></i></div>
-                    <div class="player-card" data-nick="Кот по имени дождик"><span>Кот по имени дождик</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Кот по имени дождик')"></i></div>
-                    <div class="player-card" data-nick="pxxxilip"><span>pxxxilip</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'pxxxilip')"></i></div>
-                    <div class="player-card" data-nick="Natoha"><span>Natoha</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Natoha')"></i></div>
+                    <div class="player-card leader" data-nick="Mitso"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar1.png');"></div><span>Mitso</span></div><span class="tag">Глава</span></div>
+                    <div class="player-card" data-nick="Mr. JOKER"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar2.png');"></div><span>Mr. JOKER</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. JOKER')"></i></div>
+                    <div class="player-card" data-nick="Dark Control"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar3.png');"></div><span>Dark Control</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Dark Control')"></i></div>
+                    <div class="player-card" data-nick="Mr. PROper Twelve"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar4.png');"></div><span>Mr. PROper Twelve</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. PROper Twelve')"></i></div>
+                    <div class="player-card" data-nick="Banan"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar5.png');"></div><span>Banan</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Banan')"></i></div>
+                    <div class="player-card" data-nick="Milarez"><div class="name-wrapper"><div class="roster-avatar"></div><span>Milarez</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Milarez')"></i></div>
+                    <div class="player-card" data-nick="so tedious"><div class="name-wrapper"><div class="roster-avatar"></div><span>so tedious</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'so tedious')"></i></div>
+                    <div class="player-card" data-nick="NEPTYN B MORE"><div class="name-wrapper"><div class="roster-avatar"></div><span>NEPTYN B MORE</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'NEPTYN B MORE')"></i></div>
+                    <div class="player-card" data-nick="anubis_desert"><div class="name-wrapper"><div class="roster-avatar"></div><span>anubis_desert</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'anubis_desert')"></i></div>
+                    <div class="player-card" data-nick="Zandetetor"><div class="name-wrapper"><div class="roster-avatar"></div><span>Zandetetor</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Zandetetor')"></i></div>
+                    <div class="player-card" data-nick="AERA"><div class="name-wrapper"><div class="roster-avatar"></div><span>AERA</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'AERA')"></i></div>
+                    <div class="player-card" data-nick="Maevrikk"><div class="name-wrapper"><div class="roster-avatar"></div><span>Maevrikk</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Maevrikk')"></i></div>
+                    <div class="player-card" data-nick="S.H.A.M.S.U.D.I.N"><div class="name-wrapper"><div class="roster-avatar"></div><span>S.H.A.M.S.U.D.I.N</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'S.H.A.M.S.U.D.I.N')"></i></div>
+                    <div class="player-card" data-nick="dragen"><div class="name-wrapper"><div class="roster-avatar"></div><span>dragen</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'dragen')"></i></div>
+                    <div class="player-card" data-nick="vindshtormy"><div class="name-wrapper"><div class="roster-avatar"></div><span>vindshtormy</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'vindshtormy')"></i></div>
+                    <div class="player-card" data-nick="Hangman"><div class="name-wrapper"><div class="roster-avatar"></div><span>Hangman</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Hangman')"></i></div>
+                    <div class="player-card" data-nick="[IQ]"><div class="name-wrapper"><div class="roster-avatar"></div><span>[IQ]</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '[IQ]')"></i></div>
+                    <div class="player-card" data-nick="IMRAN"><div class="name-wrapper"><div class="roster-avatar"></div><span>IMRAN</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'IMRAN')"></i></div>
+                    <div class="player-card" data-nick="ƤUϻΛ"><div class="name-wrapper"><div class="roster-avatar"></div><span>ƤUϻΛ</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'ƤUϻΛ')"></i></div>
+                    <div class="player-card" data-nick="Кот по имени дождик"><div class="name-wrapper"><div class="roster-avatar"></div><span>Кот по имени дождик</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Кот по имени дождик')"></i></div>
+                    <div class="player-card" data-nick="pxxxilip"><div class="name-wrapper"><div class="roster-avatar"></div><span>pxxxilip</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'pxxxilip')"></i></div>
+                    <div class="player-card" data-nick="Natoha"><div class="name-wrapper"><div class="roster-avatar"></div><span>Natoha</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Natoha')"></i></div>
                 </div>
                 <button type="button" class="toggle-roster-btn" id="toggleRosterBtn">Показать всех участников</button>
             </div>
@@ -384,7 +465,7 @@
         <div class="lock-overlay-box" id="mapsLockBox">
             <i class="fa-solid fa-building-shield"></i>
             <h3>Доступ Ограничен</h3>
-            <p>Тактические карты доступны исключительно действующим членам клана STAGE. Пожалуйста, авторизуйтесь через terminal "Вход" в верхнем меню.</p>
+            <p>Тактические карты доступны исключительно действующим членам клана STAGE. Пожалуйста, авторизуйтесь через терминал "Вход" в верхнем меню.</p>
         </div>
         <div class="maps-grid" id="mapsActualGrid" style="display: none; width: 100%;"></div>
     </section>
@@ -414,14 +495,14 @@
             <div class="lock-overlay-box" id="tgChatLockBox" style="margin: 0; padding: 20px; max-width: 100%; width: 100%;">
                 <i class="fa-solid fa-user-lock" style="font-size: 30px; margin-bottom: 10px; color: #0088cc; text-shadow: 0 0 15px rgba(0,136,204,0.5);"></i>
                 <h3 style="font-size: 15px;">Чат Заблокирован</h3>
-                <p style="font-size: 12px;">Основной Telegram-чат клана доступен только верифицированным учистникам клана STAGE.</p>
+                <p style="font-size: 12px;">Основной Telegram-чат клана доступен только верифицированным участникам клана STAGE.</p>
             </div>
             <a href="https://t.me/+0kNCkvxktdozZTYy" id="tgChatActualBtn" target="_blank" class="social-btn btn-telegram" style="display: none;"><i class="fa-solid fa-paper-plane"></i><span>Telegram чат</span></a>
             
             <div class="lock-overlay-box" id="telemostLockBox" style="margin: 0; padding: 20px; max-width: 100%; width: 100%;">
                 <i class="fa-solid fa-microphone-lines" style="font-size: 30px; margin-bottom: 10px;"></i>
                 <h3 style="font-size: 15px;">Связь Заблокирована</h3>
-                <p style="font-size: 12px;">Голосовой канал Яндекс Телемост доступен только верифицированным учистникам клана STAGE.</p>
+                <p style="font-size: 12px;">Голосовой канал Яндекс Телемост доступен только верифицированным участникам клана STAGE.</p>
             </div>
             <a href="https://telemost.yandex.ru/j/02002400708623" id="telemostActualBtn" target="_blank" class="social-btn btn-telemost" style="display: none;"><i class="fa-solid fa-headset"></i><span>Яндекс Телемост</span></a>
         </div>
@@ -493,6 +574,39 @@
                 <button type="button" id="androidBotSuccessLink" class="btn-submit" style="display:inline-block; margin-bottom:10px; background:#0088cc; color:#fff; text-align:center; padding:10px 0; width:100%; border-radius: 30px; border:none; font-family: 'Orbitron', sans-serif; font-weight:900;">1. Активировать бота в ТГ</button>
                 <button type="button" class="btn-submit" onclick="document.getElementById('modalOverlay').classList.remove('active');" style="background:#1e293b; color:#94a3b8;">2. Закрыть окно</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="cabinetModalOverlay" style="z-index: 140;">
+        <div class="modal-window" style="max-width: 420px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.35);">
+            <span class="close-btn" id="closeCabinetModalBtn">&times;</span>
+            <div class="modal-title" style="color: #a855f7; border-bottom-color: rgba(168, 85, 247, 0.2);">Личный Кабинет Бойца</div>
+            
+            <div class="cabinet-profile-box">
+                <div class="cabinet-avatar-container" id="cabAvatarMain">
+                    <i class="fa-solid fa-user-shield" id="cabAvatarIconDefault"></i>
+                </div>
+                
+                <div class="avatar-picker-title">Выберите аватар профиля:</div>
+                <div class="avatar-picker-grid">
+                    <div class="avatar-picker-item" style="background-image: url('avatar1.png');" onclick="selectProfileAvatar('avatar1.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('avatar2.png');" onclick="selectProfileAvatar('avatar2.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('avatar3.png');" onclick="selectProfileAvatar('avatar3.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('avatar4.png');" onclick="selectProfileAvatar('avatar4.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('avatar5.png');" onclick="selectProfileAvatar('avatar5.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('avatar6.png');" onclick="selectProfileAvatar('avatar6.png', this)"></div>
+                </div>
+                
+                <div class="cabinet-info-list">
+                    <div class="cabinet-info-item"><span class="lbl">Позывной / Ник:</span><span class="val" id="cabNick">-</span></div>
+                    <div class="cabinet-info-item"><span class="lbl">Профиль TG:</span><span class="val" id="cabTg">-</span></div>
+                    <div class="cabinet-info-item"><span class="lbl">Telegram ID:</span><span class="val" id="cabTgId">-</span></div>
+                    <div class="cabinet-info-item"><span class="lbl">Ранг Штаба:</span><span class="val" id="cabRank">-</span></div>
+                    <div class="cabinet-info-item"><span class="lbl">Дата призыва:</span><span class="val" id="cabDate">-</span></div>
+                    <div class="cabinet-info-item" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(168,85,247,0.3);"><span class="lbl" style="color:#00f2fe;">Морское Звание:</span><span class="val rank-highlight" id="cabRole">-</span></div>
+                </div>
+            </div>
+            <button type="button" class="btn-submit" onclick="resetUserAuth()" style="background:#ef4444; color:#fff; margin-top:15px; font-size:12px; padding:10px;">Покинуть мостик (Выйти)</button>
         </div>
     </div>
 
@@ -572,6 +686,16 @@
 
         const APPROVED_TELEGRAMS = ["@bymitso", "@banan4uks", "@Dark_ControI", "@saveliy_li", "@Mr_JOKER017"];
 
+        // Иерархия званий флота STAGE (Прокачка раз в месяц)
+        const NAVAL_RANKS = [
+            "Юнга", "Матрос", "Старший матрос",
+            "Старшина 2 статьи", "Старшина 1 статьи", "Главный старшина", "Главный корабельный старшина",
+            "Мичман", "Старший мичман",
+            "Младший лейтенант", "Лейтенант", "Старший лейтенант", "Капитан-лейтенант",
+            "Капитан 3 ранга", "Капитан 2 ранга", "Капитан 1 ранга",
+            "Контр-адмирал", "Вице-адмирал", "Адмирал", "Адмирал флота"
+        ];
+
         let views = parseInt(localStorage.getItem('stage_views') || '0');
         let isUnique = localStorage.getItem('stage_unique_user');
         let uniqueVisits = parseInt(localStorage.getItem('stage_uniques') || '0');
@@ -594,16 +718,19 @@
         const navLawBtn = document.getElementById('navLawBtn');
         const navLoginBtn = document.getElementById('navLoginBtn');
         const navStatsBtn = document.getElementById('navStatsBtn');
+        const navCabinetBtn = document.getElementById('navCabinetBtn');
         const navMapsLink = document.getElementById('navMapsLink');
         const navBoardLink = document.getElementById('navBoardLink');
 
         const lawModalOverlay = document.getElementById('lawModalOverlay');
         const loginModalOverlay = document.getElementById('loginModalOverlay');
         const statsModalOverlay = document.getElementById('statsModalOverlay');
+        const cabinetModalOverlay = document.getElementById('cabinetModalOverlay');
 
         const closeLawModalBtn = document.getElementById('closeLawModalBtn');
         const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
         const closeStatsModalBtn = document.getElementById('closeStatsModalBtn');
+        const closeCabinetModalBtn = document.getElementById('closeCabinetModalBtn');
 
         const submitAdminLoginBtn = document.getElementById('submitAdminLoginBtn');
         const adminEmailInput = document.getElementById('adminEmailInput');
@@ -626,47 +753,33 @@
         let isRosterExpanded = false;
         let isLeaderMode = false;
         let currentParsedData = null;
-        let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [] };
+        let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [], metadata: {} };
         let ignoreHashReset = false; 
 
         function openTelegramBot(botUsername) {
             ignoreHashReset = true; 
-            
             const tgUrl = `tg://resolve?domain=${botUsername}`;
             const webUrl = `https://t.me/${botUsername}`;
-            
             window.location.href = tgUrl;
-            
             setTimeout(() => {
                 window.open(webUrl, '_blank', 'noopener,noreferrer');
                 setTimeout(() => { ignoreHashReset = false; }, 1000);
             }, 500);
         }
 
-        document.getElementById('androidBotLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            openTelegramBot('userinfobot');
-        });
-
-        document.getElementById('androidBotSuccessLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            openTelegramBot('StageClanRecruit_bot');
-        });
+        document.getElementById('androidBotLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('userinfobot'); });
+        document.getElementById('androidBotSuccessLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('StageClanRecruit_bot'); });
 
         window.addEventListener('DOMContentLoaded', async () => {
             if (window.location.hash && window.location.hash !== "#welcome") {
                 if (!ignoreHashReset) {
                     setTimeout(() => { 
-                        if (!ignoreHashReset) {
-                            window.location.hash = "#welcome"; 
-                            window.scrollTo(0, 0); 
-                        }
+                        if (!ignoreHashReset) { window.location.hash = "#welcome"; window.scrollTo(0, 0); }
                     }, 50);
                 }
             }
 
             await syncWithCloud();
-
             applyGlobalKickedFilters();
             renderLocalRecruits();
             generateTacticalMapsGrid();
@@ -677,7 +790,11 @@
                 return;
             }
 
-            if (localStorage.getItem('stage_team_logged') === 'true') { unlockTeamFeatures(); }
+            if (localStorage.getItem('stage_team_logged') === 'true' || localStorage.getItem('stage_authorized') === 'true') { 
+                unlockTeamFeatures(); 
+                // ИЗМЕНЕНО: Обновляем круглую иконку ЛК в меню при старте
+                refreshMenuCabinetAvatar();
+            }
             if (localStorage.getItem('stage_authorized') === 'true') { secretTgBox.style.display = 'block'; recruitBoxBtn.style.display = 'none'; }
             if (localStorage.getItem('stage_leader_session') === 'true') { activateLeaderMode(); }
             
@@ -690,17 +807,12 @@
             sections.forEach(s => observer.observe(s));
         });
 
-        window.addEventListener('focus', () => {
-            ignoreHashReset = true;
-            setTimeout(() => { ignoreHashReset = false; }, 1000);
-        });
+        window.addEventListener('focus', () => { ignoreHashReset = true; setTimeout(() => { ignoreHashReset = false; }, 1000); });
 
         async function syncWithCloud() {
             if(BIN_ID.includes("ВСТАВЬ_СЮДА")) return; 
             try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { "X-Master-Key": MASTER_KEY }
-                });
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
                 if (response.ok) {
                     const data = await response.json();
                     if(data.record) {
@@ -708,6 +820,7 @@
                         cloudDatabase.pairs = data.record.pairs || {};
                         cloudDatabase.banned = data.record.banned || [];
                         cloudDatabase.kickedNicks = data.record.kickedNicks || [];
+                        cloudDatabase.metadata = data.record.metadata || {};
                     }
                 }
             } catch (err) { console.error("Ошибка облачной синхронизации:", err); }
@@ -718,13 +831,24 @@
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Master-Key": MASTER_KEY
-                    },
+                    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
                     body: JSON.stringify(cloudDatabase)
                 });
             } catch (err) { console.error("Ошибка сохранения в облако:", err); }
+        }
+
+        // ИЗМЕНЕНО: Вспомогательная функция для обновления аватарки ЛК в навигационной панели
+        function refreshMenuCabinetAvatar() {
+            navCabinetBtn.style.display = 'block';
+            const savedAvatar = localStorage.getItem('stage_user_avatar');
+            const defaultIcon = document.getElementById('navCabinetDefaultIcon');
+            if (savedAvatar) {
+                navCabinetBtn.style.backgroundImage = `url('${savedAvatar}')`;
+                if(defaultIcon) defaultIcon.style.display = 'none';
+            } else {
+                navCabinetBtn.style.backgroundImage = 'none';
+                if(defaultIcon) defaultIcon.style.display = 'inline-block';
+            }
         }
 
         rawTelegramInput.addEventListener('input', function() {
@@ -736,21 +860,14 @@
             const idMatch = val.match(/(?:CID:)\s*([^\n⚖️]+)/i);
 
             if (nickMatch && tgMatch && idMatch) {
-                currentParsedData = {
-                    nick: nickMatch[1].trim(),
-                    tg: tgMatch[1].trim(),
-                    chatId: idMatch[1].trim()
-                };
+                currentParsedData = { nick: nickMatch[1].trim(), tg: tgMatch[1].trim(), chatId: idMatch[1].trim() };
                 parsedNickText.textContent = currentParsedData.nick;
                 parsedTgText.textContent = currentParsedData.tg;
                 parsedIdText.textContent = currentParsedData.chatId;
                 terminalStatusBox.style.display = 'block';
-            } else {
-                terminalStatusBox.style.display = 'none';
-            }
+            } else { terminalStatusBox.style.display = 'none'; }
         });
 
-        // ИСПРАВЛЕНО: Убрана отправка сообщения в общую группу `TG_CHAT_ID`. Данные летят только игроку в ЛС.
         window.executeTerminalApprove = async function() {
             if(!isLeaderMode || !currentParsedData) return;
             const acceptBtn = document.getElementById('terminalAcceptBtn');
@@ -758,20 +875,27 @@
             acceptBtn.disabled = true;
 
             const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
+            const registerTimestamp = Date.now();
             
-            cloudDatabase.recruits[currentParsedData.nick] = Date.now();
+            cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
             cloudDatabase.pairs[currentParsedData.tg.trim()] = generatedPassword.trim();
+            
+            cloudDatabase.metadata[currentParsedData.tg.trim().toLowerCase()] = {
+                nick: currentParsedData.nick,
+                chatId: currentParsedData.chatId,
+                joinDate: registerTimestamp,
+                rank: "Действующий боец"
+            };
             
             cloudDatabase.banned = cloudDatabase.banned.filter(tg => tg !== currentParsedData.tg.trim().toLowerCase());
             cloudDatabase.kickedNicks = cloudDatabase.kickedNicks.filter(n => n.toLowerCase() !== currentParsedData.nick.toLowerCase());
 
             await saveToCloud();
 
-            const personalMessage = `🎉 <b>Приветствуем на борту, боец ${currentParsedData.nick}!</b>\n\nВаш рапорт в клан <b>STAGE</b> успешно утвержден Руководством флота!\n\n🔐 <b>Ваши персональные ключи доступа к Штабу:</b>\n👤 <b>Логин (Ваш ТГ):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> <code>${CLAN_ID}</code>\n\n⚓️ <b>Секретные шлюзы коммуникации:</b>\n✈️ Telegram чат: https://t.me/+0Yy\n\nВозвращайтесь на сайт, авторизуйтесь через терминал "Вход" — Добро Пожаловать в клан STAGE! 🚢🔥`;
+            const personalMessage = `🎉 <b>Приветствуем на борту, боец ${currentParsedData.nick}!</b>\n\nВаш рапорт в клан <b>STAGE</b> успешно утвержден Руководством флота!\n\n🔐 <b>Ваши персональные ключи доступа к Штабу:</b>\n👤 <b>Логин (Ваш ТГ):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> <code>${CLAN_ID}</code>\n\n⚓️ <b>Секретные шлюзы коммуникации:</b>\n✈️ Telegram чат: https://t.me/+0kNCkvxktdozZTYy\n\nВозвращайтесь на сайт, авторизуйтесь через терминал "Вход" — Добро Пожаловать в клан STAGE! 🚢🔥`;
 
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: currentParsedData.chatId, text: personalMessage, parse_mode: 'html' })
             });
 
@@ -798,26 +922,112 @@
             localStorage.removeItem('stage_user_registered_tg');
             localStorage.removeItem('stage_team_logged');
             localStorage.removeItem('stage_leader_session');
+            localStorage.removeItem('stage_cached_nick');
+            localStorage.removeItem('stage_user_avatar'); 
             location.reload();
         }
 
         window.resetUserAuth = function() {
-            if(confirm("Вы действительно хотите выйти из аккаунта клана? Карты и доска закроются.")) {
-                forceAbsoluteLogout();
-            }
+            if(confirm("Вы действительно хотите выйти из аккаунта клана? Карты и доска закроются.")) { forceAbsoluteLogout(); }
         }
 
         navLoginBtn.addEventListener('click', () => {
             if(isLeaderMode || localStorage.getItem('stage_team_logged') === 'true') {
-                if(confirm("Выйти из текущей учетной записи?")) {
-                    forceAbsoluteLogout();
-                }
+                if(confirm("Выйти из текущей учетной записи?")) { forceAbsoluteLogout(); }
             } else {
                 adminEmailInput.value = ""; adminPasswordInput.value = "";
                 loginModalOverlay.classList.add('active');
             }
         });
         closeLoginModalBtn.addEventListener('click', () => loginModalOverlay.classList.remove('active'));
+
+        // ИЗМЕНЕНО: Функция выбора аватарки теперь обновляет и круглую иконку в меню
+        window.selectProfileAvatar = function(avatarUrl, element) {
+            document.querySelectorAll('.avatar-picker-item').forEach(item => item.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            localStorage.setItem('stage_user_avatar', avatarUrl);
+            
+            const mainAva = document.getElementById('cabAvatarMain');
+            mainAva.style.backgroundImage = `url('${avatarUrl}')`;
+            document.getElementById('cabAvatarIconDefault').style.display = 'none';
+            
+            // Сразу же перерисовываем аватарку на главной панели навигации
+            refreshMenuCabinetAvatar();
+        }
+
+        navCabinetBtn.addEventListener('click', () => {
+            let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
+            let cleanTg = sessionTg.trim().toLowerCase();
+            
+            // ИЗМЕНЕНО: Дефолтный позывной берется строго из сохраненного игрового никнейма при регистрации
+            let nick = localStorage.getItem('stage_cached_nick') || "Боец STAGE";
+            let tgId = "Не указан";
+            let joinDateStr = "Ранее 2026 г.";
+            let rank = "Участник клана";
+            let roleTitle = "Юнга"; 
+            
+            if (cleanTg && cloudDatabase.metadata[cleanTg]) {
+                let meta = cloudDatabase.metadata[cleanTg];
+                nick = meta.nick || nick;
+                tgId = meta.chatId || tgId;
+                rank = meta.rank || rank;
+                if (meta.joinDate) {
+                    let d = new Date(meta.joinDate);
+                    joinDateStr = d.toLocaleDateString('ru-RU');
+                    
+                    let diffMs = Date.now() - meta.joinDate;
+                    let diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.4375));
+                    if (diffMonths < 0) diffMonths = 0;
+                    if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
+                    roleTitle = NAVAL_RANKS[diffMonths];
+                }
+            } else if (APPROVED_TELEGRAMS.map(t => t.toLowerCase()).includes(cleanTg) || cleanTg.includes("admin")) {
+                // Если зашел основатель, выводим его красивый игровой ник (или тег)
+                if (cleanTg === "@bymitso") nick = "Mitso";
+                else if (cleanTg === "@mr_joker017") nick = "Mr. JOKER";
+                else if (cleanTg === "@dark_controi") nick = "Dark Control";
+                else if (cleanTg === "@saveliy_li") nick = "Mr. PROper Twelve";
+                else if (cleanTg === "@banan4uks") nick = "Banan";
+                else nick = sessionTg;
+
+                rank = isLeaderMode ? "Глава Флота" : "Высший совет клана";
+                roleTitle = "Адмирал флота";
+                joinDateStr = "С момента основания";
+            } else if (localStorage.getItem('stage_team_logged') === 'true' && !sessionTg) {
+                nick = "Ветеран флота";
+                rank = "Почетный участник";
+                roleTitle = "Адмирал флота";
+            }
+
+            document.getElementById('cabNick').textContent = nick;
+            document.getElementById('cabTg').textContent = sessionTg || "@stage_member";
+            document.getElementById('cabTgId').textContent = tgId;
+            document.getElementById('cabRank').textContent = rank;
+            document.getElementById('cabDate').textContent = joinDateStr;
+            document.getElementById('cabRole').textContent = roleTitle;
+
+            const savedAvatar = localStorage.getItem('stage_user_avatar');
+            const mainAva = document.getElementById('cabAvatarMain');
+            document.querySelectorAll('.avatar-picker-item').forEach(item => item.classList.remove('selected'));
+            
+            if (savedAvatar) {
+                mainAva.style.backgroundImage = `url('${savedAvatar}')`;
+                document.getElementById('cabAvatarIconDefault').style.display = 'none';
+                
+                document.querySelectorAll('.avatar-picker-item').forEach(item => {
+                    if(item.style.backgroundImage.includes(savedAvatar)) {
+                        item.classList.add('selected');
+                    }
+                });
+            } else {
+                mainAva.style.backgroundImage = 'none';
+                document.getElementById('cabAvatarIconDefault').style.display = 'block';
+            }
+
+            cabinetModalOverlay.classList.add('active');
+        });
+        closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
         submitAdminLoginBtn.addEventListener('click', () => {
             const inputLogin = adminEmailInput.value.trim();
@@ -831,13 +1041,17 @@
             if (inputLogin === SUPER_ADMIN.email && inputPassword === SUPER_ADMIN.password) {
                 localStorage.setItem('stage_leader_session', 'true');
                 localStorage.setItem('stage_team_logged', 'true');
+                localStorage.setItem('stage_user_registered_tg', "@bymitso");
                 activateLeaderMode(); unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
-                alert("Доступ подтвержден. Приветствую, Глава флота STAGE!");
+                refreshMenuCabinetAvatar();
                 return;
             }
 
             if (BASE_CLAN_MEMBERS[inputLogin.toLowerCase()] && BASE_CLAN_MEMBERS[inputLogin.toLowerCase()] === inputPassword.toLowerCase()) {
-                localStorage.setItem('stage_team_logged', 'true'); unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
+                localStorage.setItem('stage_team_logged', 'true'); 
+                localStorage.setItem('stage_user_registered_tg', inputLogin);
+                unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
+                refreshMenuCabinetAvatar();
                 alert("Доступ разрешен. С возвращением в строй, боец!");
                 return;
             }
@@ -845,7 +1059,11 @@
             if (cloudDatabase.pairs[inputLogin] && cloudDatabase.pairs[inputLogin] === inputPassword) {
                 localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', inputLogin);
+                if(cloudDatabase.metadata[inputLogin.toLowerCase()]) {
+                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin.toLowerCase()].nick);
+                }
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
+                refreshMenuCabinetAvatar();
                 alert("Верификация пройдена успешно. Добро пожаловать в тактический штаб STAGE!");
                 return;
             }
@@ -938,29 +1156,64 @@
             if (APPROVED_TELEGRAMS.map(v => v.toLowerCase()).includes(inputNick) || localApproved.includes(inputNick) || cloudDatabase.pairs[verifyTgInput.value.trim()]) {
                 localStorage.setItem('stage_authorized', 'true');
                 localStorage.setItem('stage_user_registered_tg', verifyTgInput.value.trim()); 
+                if(cloudDatabase.metadata[inputNick]) {
+                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputNick].nick);
+                }
                 secretTgBox.style.display = 'block'; recruitBoxBtn.style.display = 'none';
+                refreshMenuCabinetAvatar();
                 document.getElementById('modalOverlay').classList.remove('active');
-                alert("Верификация пройдена успешно! Доступ к ссылке чата открыт.");
+                alert("Верификация пройдена успешно! Доступ открыт.");
             } else { alert("Ошибка! Ваш Telegram-никнейм не найден в списке одобренных. Пройдите авторизацию через 'Вход' вверху."); }
         });
 
+        // ИЗМЕНЕНО: Рендеринг динамических новобранцев теперь включает структуру name-wrapper под вывод аватарок участников
         function renderLocalRecruits() {
             document.querySelectorAll('.player-card.new-recruit-dynamic').forEach(c => c.remove());
             const oneDayInMs = 24 * 60 * 60 * 1000;
             const now = Date.now();
 
+            // Проверяем, есть ли у текущего залогиненного пользователя сохраненная локально аватарка
+            const mySavedAvatar = localStorage.getItem('stage_user_avatar') || '';
+            const myRegisteredTg = (localStorage.getItem('stage_user_registered_tg') || '').trim().toLowerCase();
+
             for (let nick in cloudDatabase.recruits) {
                 const approveTime = cloudDatabase.recruits[nick];
                 const card = document.createElement('div');
                 card.setAttribute('data-nick', nick);
+                card.className = 'player-card new-recruit-dynamic';
+
+                // Вычисляем аватарку для карточки: ищем по глобальной базе метаданных
+                let avatarStyle = "";
                 
-                if (now - approveTime < oneDayInMs) {
-                    card.className = 'player-card new-recruit-dynamic';
-                    card.innerHTML = `<span>${nick}</span><span class="tag">Новобранец</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}', false)"></i>`;
-                } else {
-                    card.className = 'player-card new-recruit-dynamic';
-                    card.innerHTML = `<span>${nick}</span><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}', false)"></i>`;
+                // Если этот рекрут является текущим пользователем — берем его аватарку из localStorage мгновенно
+                let isMe = false;
+                for (let tgKey in cloudDatabase.metadata) {
+                    if (cloudDatabase.metadata[tgKey].nick === nick && tgKey === myRegisteredTg) {
+                        isMe = true;
+                    }
                 }
+
+                if (isMe && mySavedAvatar) {
+                    avatarStyle = `style="background-image: url('${mySavedAvatar}');"`;
+                } else {
+                    // Иначе смотрим, зашита ли аватарка в метаданных (будет расширяться при сессиях)
+                    for (let tgKey in cloudDatabase.metadata) {
+                        if (cloudDatabase.metadata[tgKey].nick === nick && cloudDatabase.metadata[tgKey].avatar) {
+                            avatarStyle = `style="background-image: url('${cloudDatabase.metadata[tgKey].avatar}');"`;
+                        }
+                    }
+                }
+                
+                const tagHtml = (now - approveTime < oneDayInMs) ? `<span class="tag">Новобранец</span>` : '';
+                
+                card.innerHTML = `
+                    <div class="name-wrapper">
+                        <div class="roster-avatar" ${avatarStyle}></div>
+                        <span>${nick}</span>
+                    </div>
+                    ${tagHtml}
+                    <i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}', false)"></i>
+                `;
                 
                 if (window.innerWidth <= 768 && !isRosterExpanded) { card.style.display = 'none'; card.style.opacity = '0'; }
                 playersGrid.appendChild(card);
@@ -978,8 +1231,12 @@
                 delete cloudDatabase.recruits[nick];
                 possibleTgs.forEach(tg => {
                     delete cloudDatabase.pairs[tg];
+                    delete cloudDatabase.metadata[tg];
                     for(let key in cloudDatabase.pairs) {
                         if(key.toLowerCase() === tg) delete cloudDatabase.pairs[key];
+                    }
+                    for(let key in cloudDatabase.metadata) {
+                        if(key.toLowerCase() === tg) delete cloudDatabase.metadata[key];
                     }
                     if(!cloudDatabase.banned.includes(tg)) cloudDatabase.banned.push(tg);
                 });
@@ -989,7 +1246,6 @@
                 }
 
                 await saveToCloud();
-                
                 element.parentElement.remove(); 
                 alert(`Игрок ${nick} успешно вырезан из глобальной базы данных сайта на всех устройствах.`);
             }
@@ -1062,25 +1318,19 @@
         window.sendMapToBoard = function(mapFileName, buttonElement) {
             const fullMapUrl = window.location.origin + '/' + mapFileName;
             const iframe = document.getElementById('excalidrawFrame');
-            
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.postMessage({ type: "excalidraw-load-image", url: fullMapUrl }, "*");
-                
                 const originalText = buttonElement.innerHTML;
                 buttonElement.innerHTML = `<i class="fa-solid fa-circle-check"></i> На доске!`;
                 buttonElement.style.borderColor = "#22c55e";
                 buttonElement.style.color = "#22c55e";
-                
                 document.getElementById('board').scrollIntoView({ behavior: 'smooth' });
-                
                 setTimeout(() => {
                     buttonElement.innerHTML = originalText;
                     buttonElement.style.borderColor = "#a855f7";
                     buttonElement.style.color = "#a855f7";
                 }, 2000);
-            } else {
-                alert("Ошибка: Не удалось найти тактическую доску на странице.");
-            }
+            } else { alert("Ошибка: Не удалось найти тактическую доску на странице."); }
         }
     </script>
 </body>
