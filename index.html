@@ -149,7 +149,6 @@
         .welcome-screen { justify-content: center; background-image: linear-gradient(rgba(2, 5, 10, 0.4), rgba(2, 5, 10, 0.8)), url('bg.png'); }
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         
-        /* ИЗМЕНЕНО: Реалистичное мерцание неонового текста STAGE с микросбоями */
         h1 { 
             font-family: 'Orbitron', sans-serif; 
             font-size: clamp(45px, 10vw, 110px); 
@@ -190,7 +189,6 @@
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
-        /* ИЗМЕНЕНО: Новая продвинутая симуляция моргания неонового табло */
         @keyframes bulbFlicker {
             0%, 100%, 4%, 8%, 12%, 22%, 26%, 30%, 42%, 46%, 50%, 62%, 66%, 70%, 82%, 86%, 90% {
                 opacity: 1;
@@ -204,7 +202,6 @@
             }
         }
 
-        /* ИЗМЕНЕНО: Футуристичное кибер-оформление заголовков Доска, Карты и т.д. */
         .section-title { 
             font-family: 'Orbitron', sans-serif; 
             font-size: clamp(26px, 5vw, 40px); 
@@ -252,7 +249,6 @@
         .attendance-user { display: flex; align-items: center; gap: 6px; font-size: 12px; }
         .attendance-user .micro-ava { width: 14px; height: 14px; border-radius: 50%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); background-color: #050b14; }
 
-        /* ИЗМЕНЕНО: Кнопки голосования для участников прямо внутри интерфейса сайта */
         .website-vote-block { display: none; gap: 10px; justify-content: center; margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
         .btn-web-vote { flex: 1; padding: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 11px; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
         .btn-web-vote.v-yes { background: #22c55e; color: #000; }
@@ -315,7 +311,7 @@
         .map-name { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; }
         
         .btn-map-download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(0, 242, 254, 0.1); border: 1px solid #00f2fe; color: #00f2fe; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 4px; transition: all 0.3s; }
-        .btn-map-download:hover { background: #00f2fe; color: #02050a; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
+        .btn-map-download:hover { background: #00f2fe; color: #02050a; box-shadow: 0 0 15px rgba(0, 242, 254, 0.35); }
 
         .btn-map-copy { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; color: #a855f7; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; border-radius: 4px; transition: all 0.3s; cursor: pointer; margin-top: -4px; }
         .btn-map-copy:hover { background: #a855f7; color: #ffffff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
@@ -521,27 +517,6 @@
                 <div class="rank-title">Участники клана</div>
                 <div class="players-grid" id="playersGrid">
                     <div class="player-card leader" data-nick="Mitso"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar1.png');"></div><span>Mitso</span></div><span class="tag">Глава</span></div>
-                    <div class="player-card" data-nick="Mr. JOKER"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar2.png');"></div><span>Mr. JOKER</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. JOKER')"></i></div>
-                    <div class="player-card" data-nick="Dark Control"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar3.png');"></div><span>Dark Control</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Dark Control')"></i></div>
-                    <div class="player-card" data-nick="Mr. PROper Twelve"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar4.png');"></div><span>Mr. PROper Twelve</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Mr. PROper Twelve')"></i></div>
-                    <div class="player-card" data-nick="Banan"><div class="name-wrapper"><div class="roster-avatar" style="background-image: url('avatar5.png');"></div><span>Banan</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Banan')"></i></div>
-                    <div class="player-card" data-nick="Milarez"><div class="name-wrapper"><div class="roster-avatar"></div><span>Milarez</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Milarez')"></i></div>
-                    <div class="player-card" data-nick="so tedious"><div class="name-wrapper"><div class="roster-avatar"></div><span>so tedious</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'so tedious')"></i></div>
-                    <div class="player-card" data-nick="NEPTYN B MORE"><div class="name-wrapper"><div class="roster-avatar"></div><span>NEPTYN B MORE</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'NEPTYN B MORE')"></i></div>
-                    <div class="player-card" data-nick="anubis_desert"><div class="name-wrapper"><div class="roster-avatar"></div><span>anubis_desert</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'anubis_desert')"></i></div>
-                    <div class="player-card" data-nick="Zandetetor"><div class="name-wrapper"><div class="roster-avatar"></div><span>Zandetetor</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Zandetetor')"></i></div>
-                    <div class="player-card" data-nick="AERA"><div class="name-wrapper"><div class="roster-avatar"></div><span>AERA</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'AERA')"></i></div>
-                    <div class="player-card" data-nick="Maevrikk"><div class="name-wrapper"><div class="roster-avatar"></div><span>Maevrikk</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Maevrikk')"></i></div>
-                    <div class="player-card" data-nick="S.H.A.M.S.U.D.I.N"><div class="name-wrapper"><div class="roster-avatar"></div><span>S.H.A.M.S.U.D.I.N</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'S.H.A.M.S.U.D.I.N')"></i></div>
-                    <div class="player-card" data-nick="dragen"><div class="name-wrapper"><div class="roster-avatar"></div><span>dragen</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'dragen')"></i></div>
-                    <div class="player-card" data-nick="vindshtormy"><div class="name-wrapper"><div class="roster-avatar"></div><span>vindshtormy</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'vindshtormy')"></i></div>
-                    <div class="player-card" data-nick="Hangman"><div class="name-wrapper"><div class="roster-avatar"></div><span>Hangman</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Hangman')"></i></div>
-                    <div class="player-card" data-nick="[IQ]"><div class="name-wrapper"><div class="roster-avatar"></div><span>[IQ]</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '[IQ]')"></i></div>
-                    <div class="player-card" data-nick="IMRAN"><div class="name-wrapper"><div class="roster-avatar"></div><span>IMRAN</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'IMRAN')"></i></div>
-                    <div class="player-card" data-nick="ƤUϻΛ"><div class="name-wrapper"><div class="roster-avatar"></div><span>ƤUϻΛ</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'ƤUϻΛ')"></i></div>
-                    <div class="player-card" data-nick="Кот по имени дождик"><div class="name-wrapper"><div class="roster-avatar"></div><span>Кот по имени дождик</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Кот по имени дождик')"></i></div>
-                    <div class="player-card" data-nick="pxxxilip"><div class="name-wrapper"><div class="roster-avatar"></div><span>pxxxilip</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'pxxxilip')"></i></div>
-                    <div class="player-card" data-nick="Natoha"><div class="name-wrapper"><div class="roster-avatar"></div><span>Natoha</span></div><i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, 'Natoha')"></i></div>
                 </div>
                 <button type="button" class="toggle-roster-btn" id="toggleRosterBtn">Показать всех участников</button>
             </div>
@@ -937,10 +912,11 @@
 
         window.addEventListener('focus', () => { ignoreHashReset = true; setTimeout(() => { ignoreHashReset = false; }, 1000); });
 
+        // ИСПРАВЛЕНО: Чтение идет напрямую из корня бина для исключения версионных сбоев при перезагрузке
         async function syncWithCloud() {
             if(BIN_ID.includes("ВСТАВЬ_СЮДА")) return; 
             try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { headers: { "X-Master-Key": MASTER_KEY } });
                 if (response.ok) {
                     const data = await response.json();
                     if(data.record) {
@@ -957,12 +933,17 @@
             } catch (err) { console.error("Ошибка облачной синхронизации:", err); }
         }
 
+        // ИСПРАВЛЕНО: Добавлен заголовок X-Bin-Versioning: false для фиксации стабильного сохранения без дублирования версий
         async function saveToCloud() {
             if(BIN_ID.includes("ВСТАВЬ_СЮДА")) return;
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "X-Master-Key": MASTER_KEY,
+                        "X-Bin-Versioning": "false"
+                    },
                     body: JSON.stringify(cloudDatabase)
                 });
             } catch (err) { console.error("Ошибка сохранения в облако:", err); }
@@ -1101,7 +1082,6 @@
             let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
             let cleanTg = sessionTg.trim().toLowerCase();
             
-            // ИЗМЕНЕНО: Если залогинен Админ (Mitso), выводим жестко регламентированные данные профиля
             let nick = localStorage.getItem('stage_cached_nick') || "Боец STAGE";
             let tgId = "Не указан";
             let joinDateStr = "Ранее 2026 г.";
@@ -1173,7 +1153,6 @@
         });
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: При открытии планировщика календарь автоматически стартует с текущей даты
         btnTrainingTrigger.addEventListener('click', () => {
             if(!isLeaderMode) return;
             const todayStr = new Date().toISOString().split('T')[0];
@@ -1183,7 +1162,6 @@
         });
         closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: Добавлена лог-диагностика ошибок API Телеграм при отправке в ветки супергрупп
         btnSubmitTraining.addEventListener('click', async () => {
             const dateVal = inputTrainingDate.value;
             const timeVal = inputTrainingTime.value.trim();
@@ -1224,13 +1202,12 @@
             };
 
             try {
-                // Прямой запрос к API Telegram
                 const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         chat_id: TG_CHAT_ID, 
-                        message_thread_id: TRAINING_THREAD_ID, // ID топика
+                        message_thread_id: TRAINING_THREAD_ID, 
                         text: messageText, 
                         parse_mode: 'html',
                         reply_markup: replyMarkupButtons 
@@ -1239,10 +1216,7 @@
 
                 const responseData = await response.json();
                 
-                // Если отправка в топик завершилась ошибкой (например, из-за настроек темы)
                 if (!response.ok || !responseData.ok) {
-                    console.warn("Попытка отправки без message_thread_id из-за ошибки топика...");
-                    // Фаллбэк-попытка отправить сообщение напрямую в общий чат
                     await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1272,7 +1246,6 @@
             }
         });
 
-        // ИЗМЕНЕНО: Голосование за тренировку напрямую через интерфейс сайта (данные сохраняются в JSONBin)
         window.registerWebsiteVote = async function(type) {
             let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
             let cleanTg = sessionTg.trim().toLowerCase();
@@ -1286,7 +1259,6 @@
                 userNick = sessionTg;
             }
 
-            // Очищаем дубли из обоих списков
             cloudDatabase.trainingYes = cloudDatabase.trainingYes.filter(n => n !== userNick);
             cloudDatabase.trainingNo = cloudDatabase.trainingNo.filter(n => n !== userNick);
 
@@ -1296,7 +1268,6 @@
                 cloudDatabase.trainingNo.push(userNick);
             }
 
-            // Рендерим локально и пушим в облако для синхронизации устройств
             renderAttendanceListsOnSite();
             await saveToCloud();
         }
@@ -1338,12 +1309,7 @@
                         avaUrl = cloudDatabase.metadata[k].avatar;
                     }
                 }
-                // Если статичный основатель
                 if(userNick === 'Mitso') avaUrl = "avatar1.png";
-                if(userNick === 'Mr. JOKER') avaUrl = "avatar2.png";
-                if(userNick === 'Dark Control') avaUrl = "avatar3.png";
-                if(userNick === 'Mr. PROper Twelve') avaUrl = "avatar4.png";
-                if(userNick === 'Banan') avaUrl = "avatar5.png";
 
                 const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
                 const item = document.createElement('div');
@@ -1360,10 +1326,6 @@
                     }
                 }
                 if(userNick === 'Mitso') avaUrl = "avatar1.png";
-                if(userNick === 'Mr. JOKER') avaUrl = "avatar2.png";
-                if(userNick === 'Dark Control') avaUrl = "avatar3.png";
-                if(userNick === 'Mr. PROper Twelve') avaUrl = "avatar4.png";
-                if(userNick === 'Banan') avaUrl = "avatar5.png";
 
                 const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
                 const item = document.createElement('div');
@@ -1384,7 +1346,6 @@
             trainingCountdownWidget.style.display = 'block';
             if(isLeaderMode) { btnCloseTimer.style.display = 'block'; }
 
-            // Показываем блок кнопок голосования на сайте для всех членов команды
             if(localStorage.getItem('stage_team_logged') === 'true' || localStorage.getItem('stage_authorized') === 'true') {
                 websiteVoteBlock.style.display = 'flex';
             }
@@ -1465,6 +1426,7 @@
             });
         }
 
+        UX-TEAM-FEATURES
         function unlockTeamFeatures() {
             document.getElementById('mapsLockBox').style.display = 'none';
             document.getElementById('boardLockBox').style.display = 'none';
