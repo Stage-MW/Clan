@@ -519,6 +519,13 @@
             <div class="rank-section">
                 <div class="rank-title">Участники клана</div>
                 <div class="players-grid" id="playersGrid">
+                    <div class="player-card leader" data-nick="Mitso" onclick="showPlayerInfo('Mitso')">
+                        <div class="name-wrapper">
+                            <div class="roster-avatar" style="background-image: url('avatar1.png');"></div>
+                            <span>Mitso</span>
+                        </div>
+                        <span class="tag">Глава</span>
+                    </div>
                     </div>
                 <button type="button" class="toggle-roster-btn" id="toggleRosterBtn">Показать всех участников</button>
             </div>
@@ -911,7 +918,6 @@
                 }
             }
 
-            // Быстрая локальная загрузка интерфейса
             applyGlobalKickedFilters();
             renderLocalRecruits();
             generateTacticalMapsGrid();
@@ -933,7 +939,6 @@
             }, { threshold: 0.1 });
             sections.forEach(s => observer.observe(s));
 
-            // Асинхронная выгрузка из облака в фоне без подвисания UI
             syncWithCloud().then(() => {
                 const userTg = localStorage.getItem('stage_user_registered_tg');
                 if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
@@ -1024,7 +1029,10 @@
 
             const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
             const registerTimestamp = Date.now();
-            const targetTgKey = currentParsedData.tg.trim().toLowerCase();
+            
+            // Фикс привязки ТГ, чтобы всегда был @
+            let targetTgKey = currentParsedData.tg.trim().toLowerCase();
+            if (!targetTgKey.startsWith('@')) targetTgKey = '@' + targetTgKey;
             
             cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
             cloudDatabase.pairs[targetTgKey] = generatedPassword.trim();
@@ -1113,7 +1121,7 @@
             if (cleanTg) {
                 if (!cloudDatabase.metadata[cleanTg]) { cloudDatabase.metadata[cleanTg] = {}; }
                 cloudDatabase.metadata[cleanTg].avatar = avatarUrl;
-                renderLocalRecruits(); // Ре-рендер с новым аватаром до сохранения (отзывчивость)
+                renderLocalRecruits(); 
                 await saveToCloud();
             }
             
@@ -1421,6 +1429,7 @@
             let inputLogin = adminEmailInput.value.trim().toLowerCase();
             const inputPassword = adminPasswordInput.value.trim();
             
+            // Фикс при входе: принудительно ставим собачку, если её забыли
             if (!inputLogin.startsWith('@') && inputLogin !== "admin@stage.ru") {
                 inputLogin = '@' + inputLogin;
             }
@@ -1449,7 +1458,9 @@
                 return;
             }
 
-            if (cloudDatabase.pairs[inputLogin] && cloudDatabase.pairs[inputLogin] === inputPassword) {
+            // Главный фикс проверки пароля (игнорируем регистр и пробелы для надежности)
+            let dbPassword = cloudDatabase.pairs[inputLogin];
+            if (dbPassword && dbPassword.toLowerCase() === inputPassword.toLowerCase()) {
                 localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', inputLogin);
                 if(cloudDatabase.metadata[inputLogin]) {
@@ -1566,8 +1577,17 @@
         });
 
         window.showPlayerInfo = function(nick) {
-            let playerMeta = null;
+            // Специальная карточка для Главы
+            if (nick === 'Mitso') {
+                document.getElementById('infoNick').textContent = nick;
+                document.getElementById('infoGameId').textContent = "Скрыт";
+                document.getElementById('infoRank').textContent = "Глава клана";
+                document.getElementById('infoAvatar').style.backgroundImage = "url('avatar1.png')";
+                playerInfoModalOverlay.classList.add('active');
+                return;
+            }
             
+            let playerMeta = null;
             for (let tg in cloudDatabase.metadata) {
                 if (cloudDatabase.metadata[tg].nick === nick) {
                     playerMeta = cloudDatabase.metadata[tg];
