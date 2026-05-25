@@ -376,7 +376,7 @@
             #navCabinetBtn i { font-size: 11px; }
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { padding: 60px 10px 80px; background-attachment: scroll; }
             
-            /* ЧИНИМ СЕТКУ УЧАСТНИКОВ НА ТЕЛЕФОНЕ */
+            /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ */
             .players-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
             .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; height: auto !important; }
             .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
@@ -419,7 +419,7 @@
         <div class="welcome-desc-container">
             <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой арене.</p>
             <p class="welcome-desc-p">Мы — объединение сильнейших игроков, профессионалов своего дела и настоящих фанатов Modern Warships.</p>
-            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 и Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
+            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 and Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
             <p class="welcome-desc-p">Здесь ценятся скилл, дисциплина, командная игра и стремление быть лучшими.</p>
             <p class="welcome-desc-p">STAGE — это не просто клан. Это место, где рождаются победы.</p>
         </div>
@@ -623,18 +623,16 @@
     </div>
 
     <div class="modal-overlay" id="trainingModalOverlay" style="z-index: 150;">
-        <div class="modal-window" style="max-width: 420px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);">
+        <div class="modal-window" style="max-width: 400px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);">
             <span class="close-btn" id="closeTrainingModalBtn">&times;</span>
             <div class="modal-title" style="color: #a855f7; border-bottom-color: rgba(168, 85, 247, 0.2);">Планирование тренировки</div>
-            <div class="form-group" style="display: flex; gap: 12px; margin-bottom: 15px;">
-                <div style="flex: 1;">
-                    <label style="display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px;">Выберите дату</label>
-                    <input type="date" id="inputTrainingDate" required style="width: 100%; background: #02050a; border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px; color: #fff; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px;">Напишите время</label>
-                    <input type="time" id="inputTrainingTime" required style="width: 100%; background: #02050a; border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px; color: #fff; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px;">
-                </div>
+            <div class="form-group">
+                <label>Выберите дату тренировки</label>
+                <input type="date" id="inputTrainingDate" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif; background: #02050a; color: #fff; padding: 10px; border-radius: 4px; width: 100%;">
+            </div>
+            <div class="form-group">
+                <label>Укажите время (введите вручную)</label>
+                <input type="text" id="inputTrainingTime" placeholder="Например: 18:00" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif; background: #02050a; color: #fff; padding: 10px; border-radius: 4px; width: 100%;">
             </div>
             <button type="button" class="btn-submit" id="btnSubmitTraining" style="background: #a855f7; color: #fff;">Готово</button>
         </div>
@@ -733,8 +731,6 @@
         const TG_CHAT_ID = "-1002619697984"; 
         const TG_THREAD_ID = 5264;          
         const CLAN_ID = "250489";
-        
-        // ИЗМЕНЕНО: Для стабильной отправки топику "1" (Болталка) мы принудительно парсим его в числовой тип данных
         const TRAINING_THREAD_ID = 1;
 
         const BIN_ID = "6a12294c6877513b27c06650"; 
@@ -1055,7 +1051,13 @@
             let rank = "Участник клана";
             let roleTitle = "Юнга"; 
             
-            if (cleanTg && cloudDatabase.metadata[cleanTg]) {
+            // ИЗМЕНЕНО: Если зашел Лидер (Mitso / admin), жестко выставляем его требуемые данные профиля
+            if (isLeaderMode || cleanTg === "@bymitso" || cleanTg.includes("admin")) {
+                nick = "Mitso";
+                rank = "Глава";
+                roleTitle = "Адмирал флота";
+                joinDateStr = "С момента основания";
+            } else if (cleanTg && cloudDatabase.metadata[cleanTg]) {
                 let meta = cloudDatabase.metadata[cleanTg];
                 nick = meta.nick || nick;
                 tgId = meta.chatId || tgId;
@@ -1070,15 +1072,14 @@
                     if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
                     roleTitle = NAVAL_RANKS[diffMonths];
                 }
-            } else if (APPROVED_TELEGRAMS.map(t => t.toLowerCase()).includes(cleanTg) || cleanTg.includes("admin")) {
-                if (cleanTg === "@bymitso") nick = "Mitso";
-                else if (cleanTg === "@mr_joker017") nick = "Mr. JOKER";
+            } else if (APPROVED_TELEGRAMS.map(t => t.toLowerCase()).includes(cleanTg)) {
+                if (cleanTg === "@mr_joker017") nick = "Mr. JOKER";
                 else if (cleanTg === "@dark_controi") nick = "Dark Control";
                 else if (cleanTg === "@saveliy_li") nick = "Mr. PROper Twelve";
                 else if (cleanTg === "@banan4uks") nick = "Banan";
                 else nick = sessionTg;
 
-                rank = isLeaderMode ? "Глава Флота" : "Высший совет клана";
+                rank = "Высший совет клана";
                 roleTitle = "Адмирал флота";
                 joinDateStr = "С момента основания";
             } else if (localStorage.getItem('stage_team_logged') === 'true' && !sessionTg) {
@@ -1116,35 +1117,43 @@
         });
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: При открытии планировщика дата стартует строго с сегодняшнего дня
+        // ИЗМЕНЕНО: При открытии планировщика календарь автоматически стартует с текущего дня
         btnTrainingTrigger.addEventListener('click', () => {
             if(!isLeaderMode) return;
-            
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            
-            inputTrainingDate.value = `${yyyy}-${mm}-${dd}`;
-            inputTrainingTime.value = "18:00"; 
-            
+            const todayStr = new Date().toISOString().split('T')[0];
+            inputTrainingDate.value = todayStr;
+            inputTrainingTime.value = "";
             trainingModalOverlay.classList.add('active');
         });
         closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
 
+        // ИЗМЕНЕНО: Обработка раздельных полей Даты и Текстового времени с выводом логов ошибок от ТГ
         btnSubmitTraining.addEventListener('click', async () => {
-            // ИЗМЕНЕНО: Парсинг раздельных значений даты и времени
             const dateVal = inputTrainingDate.value;
-            const timeVal = inputTrainingTime.value;
-            if(!dateVal || !timeVal) { alert("Пожалуйста, укажите дату и время!"); return; }
+            const timeVal = inputTrainingTime.value.trim();
+            if(!dateVal || !timeVal) { alert("Пожалуйста, заполните и дату, и время тренировки!"); return; }
 
-            const targetTimestamp = new Date(`${dateVal}T${timeVal}`).getTime();
-            if(targetTimestamp <= Date.now()) { alert("Нельзя спланировать тренировку в прошлом!"); return; }
+            // Парсим введенное время (ожидаем формат ЧЧ:ММ)
+            const timeParts = timeVal.match(/(\d{1,2}):(\d{2})/);
+            let hours = 18, minutes = 0;
+            if (timeParts) {
+                hours = parseInt(timeParts[1], 10);
+                minutes = parseInt(timeParts[2], 10);
+            } else {
+                alert("Пожалуйста, введите время в формате ЧЧ:ММ (например: 18:00 или 21:30)!");
+                return;
+            }
+
+            const targetDate = new Date(dateVal);
+            targetDate.setHours(hours, minutes, 0, 0);
+            const targetTimestamp = targetDate.getTime();
+
+            if(targetTimestamp <= Date.now()) { alert("Нельзя запланировать тренировку на прошедшее время!"); return; }
 
             btnSubmitTraining.textContent = "Отправка в чат...";
             btnSubmitTraining.disabled = true;
 
-            const formattedDate = new Date(`${dateVal}T${timeVal}`).toLocaleString('ru-RU', {
+            const formattedDate = targetDate.toLocaleString('ru-RU', {
                 day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
@@ -1160,18 +1169,27 @@
             };
 
             try {
-                // ИЗМЕНЕНО: message_thread_id принудительно обернут в Number() для стабильного нацеливания на форум-топик Болталки
-                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                // ИЗМЕНЕНО: Внедрена лог-диагностика для выявления ошибок отправки ботом в чат "Болталка"
+                const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         chat_id: TG_CHAT_ID, 
-                        message_thread_id: Number(TRAINING_THREAD_ID), 
+                        message_thread_id: TRAINING_THREAD_ID, 
                         text: messageText, 
                         parse_mode: 'html',
                         reply_markup: replyMarkupButtons 
                     })
                 });
+
+                const responseData = await response.json();
+                
+                if (!response.ok || !responseData.ok) {
+                    alert(`Ошибка Telegram API: ${responseData.description || "Неизвестная ошибка"}.\nУбедитесь, что бот @StageClanRecruit_bot добавлен в группу Чат Болталка и имеет права администратора на отправку сообщений.`);
+                    btnSubmitTraining.textContent = "Готово";
+                    btnSubmitTraining.disabled = false;
+                    return;
+                }
 
                 cloudDatabase.trainingTime = targetTimestamp;
                 cloudDatabase.trainingYes = [];
@@ -1181,9 +1199,9 @@
                 trainingModalOverlay.classList.remove('active');
                 initTrainingCountdown(); 
 
-                alert("Тренировка успешно запланирована! Уведомление с интерактивными кнопками отправлено в ТГ-чат.");
+                alert("Тренировка успешно запланирована! Уведомление отправлено в ТГ-чат Болталка, таймер запущен.");
             } catch (err) {
-                alert("Произошла ошибка при отправке рапорта боту.");
+                alert("Критическая ошибка сети при связи с Telegram: " + err.message);
             } finally {
                 btnSubmitTraining.textContent = "Готово";
                 btnSubmitTraining.disabled = false;
@@ -1258,10 +1276,7 @@
             }
 
             trainingCountdownWidget.style.display = 'block';
-            
-            if(isLeaderMode) {
-                btnCloseTimer.style.display = 'block';
-            }
+            if(isLeaderMode) { btnCloseTimer.style.display = 'block'; }
 
             renderAttendanceListsOnSite();
 
