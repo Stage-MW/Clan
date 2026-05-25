@@ -66,7 +66,6 @@
         #navMapsLink:hover, #navBoardLink:hover { color: #c084fc; text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
         #navStatsBtn { display: none; color: #eab308; }
         
-        /* ИЗМЕНЕНО: Стили кнопки ЛК превращены в круглую иконку-аватарку в меню */
         #navCabinetBtn { 
             display: none; 
             width: 32px; 
@@ -195,7 +194,6 @@
         .rank-section { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.2); padding: 25px; border-radius: 6px; backdrop-filter: blur(5px); position: relative; width: 100%; }
         .rank-title { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 20px); color: #00f2fe; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; text-align: center; border-bottom: 1px dashed rgba(0, 242, 254, 0.2); padding-bottom: 10px; }
         
-        /* ИЗМЕНЕНО: Добавлены стили для вывода мини-аватарок участников в общем списке */
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
         .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
@@ -247,6 +245,7 @@
         .map-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 6px; padding: 15px; display: flex; flex-direction: column; gap: 12px; backdrop-filter: blur(5px); transition: border 0.3s, box-shadow 0.3s, transform 0.2s; cursor: grab; user-select: none; }
         .map-card:active { cursor: grabbing; transform: scale(0.98); }
         .map-card:hover { border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
+        .map-img-holder { width: 100%; height: 140px; background-color: #02050a; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
         .map-img-holder { width: 100%; height: 140px; background-color: #02050a; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
         .map-info { display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
         .map-name { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; }
@@ -403,7 +402,7 @@
         <h1>Stage</h1>
         
         <div class="welcome-desc-container">
-            <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой arena.</p>
+            <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой арене.</p>
             <p class="welcome-desc-p">Мы — объединение сильнейших игроков, профессионалов своего дела и настоящих фанатов Modern Warships.</p>
             <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 и Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
             <p class="welcome-desc-p">Здесь ценятся скилл, дисциплина, командная игра и стремление быть лучшими.</p>
@@ -779,6 +778,7 @@
                 }
             }
 
+            // ИСПРАВЛЕНО: Сначала дожидаемся загрузки базы из облака, затем рендерим участников
             await syncWithCloud();
             applyGlobalKickedFilters();
             renderLocalRecruits();
@@ -792,7 +792,6 @@
 
             if (localStorage.getItem('stage_team_logged') === 'true' || localStorage.getItem('stage_authorized') === 'true') { 
                 unlockTeamFeatures(); 
-                // ИЗМЕНЕНО: Обновляем круглую иконку ЛК в меню при старте
                 refreshMenuCabinetAvatar();
             }
             if (localStorage.getItem('stage_authorized') === 'true') { secretTgBox.style.display = 'block'; recruitBoxBtn.style.display = 'none'; }
@@ -837,7 +836,6 @@
             } catch (err) { console.error("Ошибка сохранения в облако:", err); }
         }
 
-        // ИЗМЕНЕНО: Вспомогательная функция для обновления аватарки ЛК в навигационной панели
         function refreshMenuCabinetAvatar() {
             navCabinetBtn.style.display = 'block';
             const savedAvatar = localStorage.getItem('stage_user_avatar');
@@ -877,17 +875,20 @@
             const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
             const registerTimestamp = Date.now();
             
-            cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
-            cloudDatabase.pairs[currentParsedData.tg.trim()] = generatedPassword.trim();
+            // ИСПРАВЛЕНО: Все ключи сохраняются в едином нижнем регистре
+            const targetTgKey = currentParsedData.tg.trim().toLowerCase();
             
-            cloudDatabase.metadata[currentParsedData.tg.trim().toLowerCase()] = {
+            cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
+            cloudDatabase.pairs[targetTgKey] = generatedPassword.trim();
+            
+            cloudDatabase.metadata[targetTgKey] = {
                 nick: currentParsedData.nick,
                 chatId: currentParsedData.chatId,
                 joinDate: registerTimestamp,
                 rank: "Действующий боец"
             };
             
-            cloudDatabase.banned = cloudDatabase.banned.filter(tg => tg !== currentParsedData.tg.trim().toLowerCase());
+            cloudDatabase.banned = cloudDatabase.banned.filter(tg => tg !== targetTgKey);
             cloudDatabase.kickedNicks = cloudDatabase.kickedNicks.filter(n => n.toLowerCase() !== currentParsedData.nick.toLowerCase());
 
             await saveToCloud();
@@ -941,7 +942,6 @@
         });
         closeLoginModalBtn.addEventListener('click', () => loginModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: Функция выбора аватарки теперь обновляет и круглую иконку в меню
         window.selectProfileAvatar = function(avatarUrl, element) {
             document.querySelectorAll('.avatar-picker-item').forEach(item => item.classList.remove('selected'));
             element.classList.add('selected');
@@ -952,15 +952,15 @@
             mainAva.style.backgroundImage = `url('${avatarUrl}')`;
             document.getElementById('cabAvatarIconDefault').style.display = 'none';
             
-            // Сразу же перерисовываем аватарку на главной панели навигации
             refreshMenuCabinetAvatar();
+            // Перерисовываем список участников, чтобы аватарка сразу обновилась в карточке
+            renderLocalRecruits();
         }
 
         navCabinetBtn.addEventListener('click', () => {
             let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
             let cleanTg = sessionTg.trim().toLowerCase();
             
-            // ИЗМЕНЕНО: Дефолтный позывной берется строго из сохраненного игрового никнейма при регистрации
             let nick = localStorage.getItem('stage_cached_nick') || "Боец STAGE";
             let tgId = "Не указан";
             let joinDateStr = "Ранее 2026 г.";
@@ -983,7 +983,6 @@
                     roleTitle = NAVAL_RANKS[diffMonths];
                 }
             } else if (APPROVED_TELEGRAMS.map(t => t.toLowerCase()).includes(cleanTg) || cleanTg.includes("admin")) {
-                // Если зашел основатель, выводим его красивый игровой ник (или тег)
                 if (cleanTg === "@bymitso") nick = "Mitso";
                 else if (cleanTg === "@mr_joker017") nick = "Mr. JOKER";
                 else if (cleanTg === "@dark_controi") nick = "Dark Control";
@@ -1030,15 +1029,15 @@
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
         submitAdminLoginBtn.addEventListener('click', () => {
-            const inputLogin = adminEmailInput.value.trim();
+            const inputLogin = adminEmailInput.value.trim().toLowerCase();
             const inputPassword = adminPasswordInput.value.trim();
 
-            if (cloudDatabase.banned.includes(inputLogin.toLowerCase())) {
+            if (cloudDatabase.banned.includes(inputLogin)) {
                 alert("Данный аккаунт заблокирован решением штаба STAGE.");
                 return;
             }
 
-            if (inputLogin === SUPER_ADMIN.email && inputPassword === SUPER_ADMIN.password) {
+            if (inputLogin === SUPER_ADMIN.email.toLowerCase() && inputPassword === SUPER_ADMIN.password) {
                 localStorage.setItem('stage_leader_session', 'true');
                 localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
@@ -1047,23 +1046,26 @@
                 return;
             }
 
-            if (BASE_CLAN_MEMBERS[inputLogin.toLowerCase()] && BASE_CLAN_MEMBERS[inputLogin.toLowerCase()] === inputPassword.toLowerCase()) {
+            if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin] === inputPassword.toLowerCase()) {
                 localStorage.setItem('stage_team_logged', 'true'); 
-                localStorage.setItem('stage_user_registered_tg', inputLogin);
+                localStorage.setItem('stage_user_registered_tg', adminEmailInput.value.trim());
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
                 alert("Доступ разрешен. С возвращением в строй, боец!");
                 return;
             }
 
+            // ИСПРАВЛЕНО: Проверка пароля и логина теперь полностью регистронезависима
             if (cloudDatabase.pairs[inputLogin] && cloudDatabase.pairs[inputLogin] === inputPassword) {
                 localStorage.setItem('stage_team_logged', 'true');
-                localStorage.setItem('stage_user_registered_tg', inputLogin);
-                if(cloudDatabase.metadata[inputLogin.toLowerCase()]) {
-                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin.toLowerCase()].nick);
+                localStorage.setItem('stage_user_registered_tg', adminEmailInput.value.trim());
+                if(cloudDatabase.metadata[inputLogin]) {
+                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin].nick);
                 }
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
+                // Сразу обновляем список участников для правильного отображения карточки
+                renderLocalRecruits();
                 alert("Верификация пройдена успешно. Добро пожаловать в тактический штаб STAGE!");
                 return;
             }
@@ -1153,7 +1155,7 @@
             if(cloudDatabase.banned.includes(inputNick)) { alert("Доступ заблокирован штабом клана."); return; }
 
             const localApproved = JSON.parse(localStorage.getItem('stage_approved_list')) || [];
-            if (APPROVED_TELEGRAMS.map(v => v.toLowerCase()).includes(inputNick) || localApproved.includes(inputNick) || cloudDatabase.pairs[verifyTgInput.value.trim()]) {
+            if (APPROVED_TELEGRAMS.map(v => v.toLowerCase()).includes(inputNick) || localApproved.includes(inputNick) || cloudDatabase.pairs[inputNick]) {
                 localStorage.setItem('stage_authorized', 'true');
                 localStorage.setItem('stage_user_registered_tg', verifyTgInput.value.trim()); 
                 if(cloudDatabase.metadata[inputNick]) {
@@ -1166,13 +1168,11 @@
             } else { alert("Ошибка! Ваш Telegram-никнейм не найден в списке одобренных. Пройдите авторизацию через 'Вход' вверху."); }
         });
 
-        // ИЗМЕНЕНО: Рендеринг динамических новобранцев теперь включает структуру name-wrapper под вывод аватарок участников
         function renderLocalRecruits() {
             document.querySelectorAll('.player-card.new-recruit-dynamic').forEach(c => c.remove());
             const oneDayInMs = 24 * 60 * 60 * 1000;
             const now = Date.now();
 
-            // Проверяем, есть ли у текущего залогиненного пользователя сохраненная локально аватарка
             const mySavedAvatar = localStorage.getItem('stage_user_avatar') || '';
             const myRegisteredTg = (localStorage.getItem('stage_user_registered_tg') || '').trim().toLowerCase();
 
@@ -1182,11 +1182,9 @@
                 card.setAttribute('data-nick', nick);
                 card.className = 'player-card new-recruit-dynamic';
 
-                // Вычисляем аватарку для карточки: ищем по глобальной базе метаданных
                 let avatarStyle = "";
-                
-                // Если этот рекрут является текущим пользователем — берем его аватарку из localStorage мгновенно
                 let isMe = false;
+                
                 for (let tgKey in cloudDatabase.metadata) {
                     if (cloudDatabase.metadata[tgKey].nick === nick && tgKey === myRegisteredTg) {
                         isMe = true;
@@ -1196,7 +1194,6 @@
                 if (isMe && mySavedAvatar) {
                     avatarStyle = `style="background-image: url('${mySavedAvatar}');"`;
                 } else {
-                    // Иначе смотрим, зашита ли аватарка в метаданных (будет расширяться при сессиях)
                     for (let tgKey in cloudDatabase.metadata) {
                         if (cloudDatabase.metadata[tgKey].nick === nick && cloudDatabase.metadata[tgKey].avatar) {
                             avatarStyle = `style="background-image: url('${cloudDatabase.metadata[tgKey].avatar}');"`;
@@ -1230,15 +1227,10 @@
                 
                 delete cloudDatabase.recruits[nick];
                 possibleTgs.forEach(tg => {
-                    delete cloudDatabase.pairs[tg];
-                    delete cloudDatabase.metadata[tg];
-                    for(let key in cloudDatabase.pairs) {
-                        if(key.toLowerCase() === tg) delete cloudDatabase.pairs[key];
-                    }
-                    for(let key in cloudDatabase.metadata) {
-                        if(key.toLowerCase() === tg) delete cloudDatabase.metadata[key];
-                    }
-                    if(!cloudDatabase.banned.includes(tg)) cloudDatabase.banned.push(tg);
+                    const normTg = tg.toLowerCase();
+                    delete cloudDatabase.pairs[normTg];
+                    delete cloudDatabase.metadata[normTg];
+                    if(!cloudDatabase.banned.includes(normTg)) cloudDatabase.banned.push(normTg);
                 });
 
                 if (isStatic) { 
