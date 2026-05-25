@@ -665,11 +665,13 @@
         <div class="modal-window" style="max-width: 350px; border-color: #00f2fe; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); text-align: center; padding: 30px 20px;">
             <span class="close-btn" id="closePlayerInfoBtn">&times;</span>
             <div class="cabinet-avatar-container" id="infoAvatar" style="margin: 0 auto 15px; width: 80px; height: 80px; border-color: #00f2fe;"></div>
-            <div class="modal-title" id="infoNick" style="margin-bottom: 10px; border-bottom: none;">-</div>
             
             <div style="background: rgba(2, 5, 10, 0.6); padding: 15px; border-radius: 6px; border: 1px dashed rgba(0, 242, 254, 0.3); margin-top: 15px;">
+                <div style="color: #00f2fe; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Никнейм:</div>
+                <div id="infoNick" style="font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.5);">-</div>
+                
                 <div style="color: #00f2fe; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Игровой ID:</div>
-                <div id="infoGameId" style="font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.5);">-</div>
+                <div id="infoGameId" style="font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.5);">-</div>
                 
                 <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Должность:</div>
                 <div id="infoRank" style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #fff;">-</div>
@@ -895,6 +897,7 @@
         
         let cloudDatabase = { recruits: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
+        let isCloudSynced = false; // Флаг успешной загрузки, чтобы не затереть базу пустыми данными
 
         // Независимая генерация пароля по Telegram-нику
         function getClanPassword(tgLogin) {
@@ -951,7 +954,7 @@
             }, { threshold: 0.1 });
             sections.forEach(s => observer.observe(s));
 
-            // Обновленный вызов к Supabase
+            // Загружаем базу при старте
             syncWithCloud().then(() => {
                 const userTg = localStorage.getItem('stage_user_registered_tg');
                 if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
@@ -962,18 +965,29 @@
                 renderLocalRecruits();
                 initTrainingCountdown();
             });
+
+            // Автообновление списка участников для синхронизации в реальном времени
+            setInterval(() => {
+                syncWithCloud().then(() => {
+                    applyGlobalKickedFilters();
+                    renderLocalRecruits();
+                    renderAttendanceListsOnSite();
+                });
+            }, 30000);
         });
 
         window.addEventListener('focus', () => { ignoreHashReset = true; setTimeout(() => { ignoreHashReset = false; }, 1000); });
 
-        // --- ОБНОВЛЕННАЯ СИНХРОНИЗАЦИЯ SUPABASE ---
+        // --- БЕЗОПАСНАЯ СИНХРОНИЗАЦИЯ SUPABASE ---
         async function syncWithCloud() {
             try {
+                // Блокируем кэш, чтобы всегда получать новые данные
                 const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
                     headers: { 
                         "apikey": SUPABASE_KEY, 
                         "Authorization": `Bearer ${SUPABASE_KEY}` 
-                    }
+                    },
+                    cache: 'no-store'
                 });
                 if (response.ok) {
                     const rows = await response.json();
@@ -987,12 +1001,51 @@
                         cloudDatabase.trainingYes = db.trainingYes || [];
                         cloudDatabase.trainingNo = db.trainingNo || [];
                     }
+                    isCloudSynced = true; // Подтверждаем, что данные получены успешно
                 }
             } catch (err) { console.error("Ошибка синхронизации Supabase:", err); }
         }
 
         async function saveToCloud() {
+            if (!isCloudSynced) {
+                console.warn("Защита: попытка сохранения до загрузки базы отменена, чтобы не стереть чужие данные.");
+                await syncWithCloud();
+                if (!isCloudSynced) return; 
+            }
             try {
+                // Скачиваем самые свежие данные перед записью, чтобы не стереть то, что кто-то добавил секунду назад
+                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` },
+                    cache: 'no-store'
+                });
+                
+                let latestDb = cloudDatabase;
+                
+                if (response.ok) {
+                    const rows = await response.json();
+                    if(rows.length > 0 && rows[0].data) {
+                        const db = rows[0].data;
+                        
+                        // Склеиваем старые и новые данные (Merge)
+                        let mergedRecruits = { ...db.recruits, ...cloudDatabase.recruits };
+                        let mergedKicked = [...new Set([...(db.kickedNicks||[]), ...cloudDatabase.kickedNicks])];
+                        let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])];
+                        
+                        // Удаляем тех, кого успели кикнуть
+                        mergedKicked.forEach(k => delete mergedRecruits[k]);
+                        
+                        latestDb = {
+                            recruits: mergedRecruits,
+                            banned: mergedBanned,
+                            kickedNicks: mergedKicked,
+                            metadata: { ...db.metadata, ...cloudDatabase.metadata },
+                            trainingTime: cloudDatabase.trainingTime !== undefined ? cloudDatabase.trainingTime : db.trainingTime,
+                            trainingYes: cloudDatabase.trainingYes || db.trainingYes || [],
+                            trainingNo: cloudDatabase.trainingNo || db.trainingNo || []
+                        };
+                    }
+                }
+
                 await fetch(`${SUPABASE_URL}state?id=eq.1`, {
                     method: "PATCH",
                     headers: {
@@ -1001,8 +1054,10 @@
                         "Authorization": `Bearer ${SUPABASE_KEY}`,
                         "Prefer": "return=minimal"
                     },
-                    body: JSON.stringify({ data: cloudDatabase })
+                    body: JSON.stringify({ data: latestDb })
                 });
+                
+                cloudDatabase = latestDb; // Обновляем локальную базу слитой версией
             } catch (err) { console.error("Ошибка сохранения Supabase:", err); }
         }
 
@@ -1071,7 +1126,7 @@
 
             await saveToCloud();
 
-            const personalMessage = `🎉 <b>Приветствуем на борту, боец ${currentParsedData.nick}!</b>\n\nВаш рапорт в клан <b>STAGE</b> успешно утвержден Руководством флота!\n\n🔐 <b>Ваши персональные ключи доступа к Штабу:</b>\n👤 <b>Логин (Ваш ТГ):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> YRD9HT${CLAN_ID}</code>\n\n⚓️ <b>Секретные шлюзы коммуникации:</b>\n✈️ Telegram чат: https://t.me/+0kNCkvxktdozZTYy\n\nВозвращайтесь на сайт, авторизуйтесь через терминал "Вход" — Добро Пожаловать в клан STAGE! 🚢🔥`;
+            const personalMessage = `🎉 <b>Приветствуем на борту, боец ${currentParsedData.nick}!</b>\n\nВаш рапорт в клан <b>STAGE</b> успешно утвержден Руководством флота!\n\n🔐 <b>Ваши персональные ключи доступа к Штабу:</b>\n👤 <b>Логин (Ваш ТГ):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> <YRD9HT>${CLAN_ID}</code>\n\n⚓️ <b>Секретные шлюзы коммуникации:</b>\n✈️ Telegram чат: https://t.me/+0kNCkvxktdozZTYy\n\nВозвращайтесь на сайт, авторизуйтесь через терминал "Вход" — Добро Пожаловать в клан STAGE! 🚢🔥`;
 
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1444,7 +1499,6 @@
             countdownIntervalId = setInterval(updateTimer, 1000);
         }
 
-        // НАДЕЖНАЯ СИСТЕМА ВХОДА (Пароль вычисляется автономно)
         submitAdminLoginBtn.addEventListener('click', () => {
             let inputLogin = adminEmailInput.value.trim().toLowerCase();
             let inputPassword = adminPasswordInput.value.trim().toUpperCase();
@@ -1460,18 +1514,15 @@
 
             let isApproved = false;
 
-            // 1. Проверка Администратора
             if (inputLogin === SUPER_ADMIN.email.toLowerCase() && inputPassword === SUPER_ADMIN.password.toUpperCase()) {
                 isApproved = true;
                 localStorage.setItem('stage_leader_session', 'true');
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
             }
-            // 2. Проверка Основателей
             else if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin].toUpperCase() === inputPassword) {
                 isApproved = true;
                 localStorage.setItem('stage_user_registered_tg', inputLogin);
             }
-            // 3. Проверка Бойцов 
             else {
                 const expectedPassword = getClanPassword(inputLogin);
                 const universalPassword = "STAGE"; 
@@ -1600,6 +1651,7 @@
             alert("Верификация пройдена успешно! Доступ открыт.");
         });
 
+        // Функция открытия информации (модальное окно обновлено)
         window.showPlayerInfo = function(nick) {
             if (nick === 'Mitso') {
                 document.getElementById('infoNick').textContent = nick;
@@ -1623,8 +1675,8 @@
             if (playerMeta) {
                 document.getElementById('infoGameId').textContent = playerMeta.gameId || "Не указан";
                 document.getElementById('infoRank').textContent = playerMeta.rank || "Боец";
-                const ava = playerMeta.avatar || 'avatar1.png';
-                document.getElementById('infoAvatar').style.backgroundImage = `url('${ava}')`;
+                const ava = playerMeta.avatar || ''; // Оставляем пустым, если аватар еще не выбран
+                document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
             } else {
                 document.getElementById('infoGameId').textContent = "Скрыт";
                 document.getElementById('infoRank').textContent = "Участник";
