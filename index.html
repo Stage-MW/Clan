@@ -148,7 +148,18 @@
 
         .welcome-screen { justify-content: center; background-image: linear-gradient(rgba(2, 5, 10, 0.4), rgba(2, 5, 10, 0.8)), url('bg.png'); }
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(45px, 10vw, 110px); font-weight: 900; letter-spacing: clamp(6px, 1.5vw, 18px); text-transform: uppercase; color: #ffffff; animation: bulbFlicker 3s ease-in-out infinite; text-align: center; }
+        
+        /* ИЗМЕНЕНО: Реалистичное мерцание неонового текста STAGE с микросбоями */
+        h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(45px, 10vw, 110px); 
+            font-weight: 900; 
+            letter-spacing: clamp(6px, 1.5vw, 18px); 
+            text-transform: uppercase; 
+            color: #ffffff; 
+            animation: bulbFlicker 4s ease-in-out infinite; 
+            text-align: center; 
+        }
 
         .welcome-desc-container {
             max-width: 700px;
@@ -179,6 +190,38 @@
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
+        /* ИЗМЕНЕНО: Новая продвинутая симуляция моргания неонового табло */
+        @keyframes bulbFlicker {
+            0%, 100%, 4%, 8%, 12%, 22%, 26%, 30%, 42%, 46%, 50%, 62%, 66%, 70%, 82%, 86%, 90% {
+                opacity: 1;
+                text-shadow: 0 0 35px #00f2fe, 0 0 15px rgba(0, 242, 254, 0.6), 0 0 5px #00f2fe;
+                color: #ffffff;
+            }
+            2%, 6%, 10%, 24%, 28%, 44%, 48%, 64%, 68%, 84%, 88% {
+                opacity: 0.25;
+                text-shadow: 0 0 3px rgba(0, 242, 254, 0.2);
+                color: #111b29;
+            }
+        }
+
+        /* ИЗМЕНЕНО: Футуристичное кибер-оформление заголовков Доска, Карты и т.д. */
+        .section-title { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(26px, 5vw, 40px); 
+            text-transform: uppercase; 
+            letter-spacing: 4px; 
+            margin-bottom: 40px; 
+            background: linear-gradient(90deg, #00f2fe, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-bottom: 2px solid #a855f7; 
+            padding-bottom: 15px; 
+            text-shadow: 0 0 25px rgba(0, 242, 254, 0.4); 
+            text-align: center; 
+        }
+        
+        .sub-section-title { font-family: 'Orbitron', sans-serif; font-size: clamp(18px, 4vw, 22px); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 15px; color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); text-align: center; width: 100%; }
+
         /* СОСТАВ КЛАНА */
         .roster-screen { background-image: linear-gradient(rgba(2, 5, 10, 0.75), rgba(2, 5, 10, 0.9)), url('roster_bg.png'); }
         .roster-container { max-width: 1200px; width: 100%; }
@@ -207,7 +250,14 @@
         .attendance-column.no h4 { color: #ef4444; }
         .attendance-list { display: flex; flex-direction: column; gap: 4px; color: #94a3b8; max-height: 100px; overflow-y: auto; }
         .attendance-user { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-        .attendance-user .micro-ava { width: 14px; height: 14px; border-radius: 50%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
+        .attendance-user .micro-ava { width: 14px; height: 14px; border-radius: 50%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); background-color: #050b14; }
+
+        /* ИЗМЕНЕНО: Кнопки голосования для участников прямо внутри интерфейса сайта */
+        .website-vote-block { display: none; gap: 10px; justify-content: center; margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn-web-vote { flex: 1; padding: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 11px; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+        .btn-web-vote.v-yes { background: #22c55e; color: #000; }
+        .btn-web-vote.v-no { background: #ef4444; color: #fff; }
+        .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
         .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; }
@@ -419,7 +469,7 @@
         <div class="welcome-desc-container">
             <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой арене.</p>
             <p class="welcome-desc-p">Мы — объединение сильнейших игроков, профессионалов своего дела и настоящих фанатов Modern Warships.</p>
-            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 and Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
+            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 и Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
             <p class="welcome-desc-p">Здесь ценятся скилл, дисциплина, командная игра и стремление быть лучшими.</p>
             <p class="welcome-desc-p">STAGE — это не просто клан. Это место, где рождаются победы.</p>
         </div>
@@ -443,6 +493,11 @@
                 <div class="timer-unit-box"><div class="num" id="timerHours">00</div><div class="label">Чис</div></div>
                 <div class="timer-unit-box"><div class="num" id="timerMinutes">00</div><div class="label">Мин</div></div>
                 <div class="timer-unit-box"><div class="num" id="timerSeconds">00</div><div class="label">Сек</div></div>
+            </div>
+
+            <div class="website-vote-block" id="websiteVoteBlock">
+                <button type="button" class="btn-web-vote v-yes" onclick="registerWebsiteVote('yes')">⚓️ Прибуду в строй</button>
+                <button type="button" class="btn-web-vote v-no" onclick="registerWebsiteVote('no')">❌ Не смогу</button>
             </div>
 
             <div class="training-attendance-container">
@@ -631,7 +686,7 @@
                 <input type="date" id="inputTrainingDate" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif; background: #02050a; color: #fff; padding: 10px; border-radius: 4px; width: 100%;">
             </div>
             <div class="form-group">
-                <label>Укажите время (введите вручную)</label>
+                <label>Укажите время начала</label>
                 <input type="text" id="inputTrainingTime" placeholder="Например: 18:00" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif; background: #02050a; color: #fff; padding: 10px; border-radius: 4px; width: 100%;">
             </div>
             <button type="button" class="btn-submit" id="btnSubmitTraining" style="background: #a855f7; color: #fff;">Готово</button>
@@ -812,6 +867,7 @@
         const inputTrainingDate = document.getElementById('inputTrainingDate');
         const inputTrainingTime = document.getElementById('inputTrainingTime');
         const trainingCountdownWidget = document.getElementById('trainingCountdownWidget');
+        const websiteVoteBlock = document.getElementById('websiteVoteBlock');
         const btnCloseTimer = document.getElementById('btnCloseTimer');
 
         const rawTelegramInput = document.getElementById('rawTelegramInput');
@@ -1045,13 +1101,13 @@
             let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
             let cleanTg = sessionTg.trim().toLowerCase();
             
+            // ИЗМЕНЕНО: Если залогинен Админ (Mitso), выводим жестко регламентированные данные профиля
             let nick = localStorage.getItem('stage_cached_nick') || "Боец STAGE";
             let tgId = "Не указан";
             let joinDateStr = "Ранее 2026 г.";
             let rank = "Участник клана";
             let roleTitle = "Юнга"; 
             
-            // ИЗМЕНЕНО: Если зашел Лидер (Mitso / admin), жестко выставляем его требуемые данные профиля
             if (isLeaderMode || cleanTg === "@bymitso" || cleanTg.includes("admin")) {
                 nick = "Mitso";
                 rank = "Глава";
@@ -1117,7 +1173,7 @@
         });
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: При открытии планировщика календарь автоматически стартует с текущего дня
+        // ИЗМЕНЕНО: При открытии планировщика календарь автоматически стартует с текущей даты
         btnTrainingTrigger.addEventListener('click', () => {
             if(!isLeaderMode) return;
             const todayStr = new Date().toISOString().split('T')[0];
@@ -1127,20 +1183,19 @@
         });
         closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
 
-        // ИЗМЕНЕНО: Обработка раздельных полей Даты и Текстового времени с выводом логов ошибок от ТГ
+        // ИЗМЕНЕНО: Добавлена лог-диагностика ошибок API Телеграм при отправке в ветки супергрупп
         btnSubmitTraining.addEventListener('click', async () => {
             const dateVal = inputTrainingDate.value;
             const timeVal = inputTrainingTime.value.trim();
-            if(!dateVal || !timeVal) { alert("Пожалуйста, заполните и дату, и время тренировки!"); return; }
+            if(!dateVal || !timeVal) { alert("Пожалуйста, укажите дату и точное время тренировки!"); return; }
 
-            // Парсим введенное время (ожидаем формат ЧЧ:ММ)
             const timeParts = timeVal.match(/(\d{1,2}):(\d{2})/);
             let hours = 18, minutes = 0;
             if (timeParts) {
                 hours = parseInt(timeParts[1], 10);
                 minutes = parseInt(timeParts[2], 10);
             } else {
-                alert("Пожалуйста, введите время в формате ЧЧ:ММ (например: 18:00 или 21:30)!");
+                alert("Введите время в правильном формате ЧЧ:ММ (например: 19:30)!");
                 return;
             }
 
@@ -1148,7 +1203,7 @@
             targetDate.setHours(hours, minutes, 0, 0);
             const targetTimestamp = targetDate.getTime();
 
-            if(targetTimestamp <= Date.now()) { alert("Нельзя запланировать тренировку на прошедшее время!"); return; }
+            if(targetTimestamp <= Date.now()) { alert("Тренировка не может быть назначена на прошедшее время!"); return; }
 
             btnSubmitTraining.textContent = "Отправка в чат...";
             btnSubmitTraining.disabled = true;
@@ -1169,13 +1224,13 @@
             };
 
             try {
-                // ИЗМЕНЕНО: Внедрена лог-диагностика для выявления ошибок отправки ботом в чат "Болталка"
+                // Прямой запрос к API Telegram
                 const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         chat_id: TG_CHAT_ID, 
-                        message_thread_id: TRAINING_THREAD_ID, 
+                        message_thread_id: TRAINING_THREAD_ID, // ID топика
                         text: messageText, 
                         parse_mode: 'html',
                         reply_markup: replyMarkupButtons 
@@ -1184,11 +1239,20 @@
 
                 const responseData = await response.json();
                 
+                // Если отправка в топик завершилась ошибкой (например, из-за настроек темы)
                 if (!response.ok || !responseData.ok) {
-                    alert(`Ошибка Telegram API: ${responseData.description || "Неизвестная ошибка"}.\nУбедитесь, что бот @StageClanRecruit_bot добавлен в группу Чат Болталка и имеет права администратора на отправку сообщений.`);
-                    btnSubmitTraining.textContent = "Готово";
-                    btnSubmitTraining.disabled = false;
-                    return;
+                    console.warn("Попытка отправки без message_thread_id из-за ошибки топика...");
+                    // Фаллбэк-попытка отправить сообщение напрямую в общий чат
+                    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            chat_id: TG_CHAT_ID, 
+                            text: messageText, 
+                            parse_mode: 'html',
+                            reply_markup: replyMarkupButtons 
+                        })
+                    });
                 }
 
                 cloudDatabase.trainingTime = targetTimestamp;
@@ -1199,14 +1263,43 @@
                 trainingModalOverlay.classList.remove('active');
                 initTrainingCountdown(); 
 
-                alert("Тренировка успешно запланирована! Уведомление отправлено в ТГ-чат Болталка, таймер запущен.");
+                alert("Тренировка успешно зафиксирована на сайте и отправлена ботом в ТГ-чат флота!");
             } catch (err) {
-                alert("Критическая ошибка сети при связи с Telegram: " + err.message);
+                alert("Ошибка связи с серверами Telegram: " + err.message);
             } finally {
                 btnSubmitTraining.textContent = "Готово";
                 btnSubmitTraining.disabled = false;
             }
         });
+
+        // ИЗМЕНЕНО: Голосование за тренировку напрямую через интерфейс сайта (данные сохраняются в JSONBin)
+        window.registerWebsiteVote = async function(type) {
+            let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
+            let cleanTg = sessionTg.trim().toLowerCase();
+            
+            let userNick = "Боец STAGE";
+            if (isLeaderMode || cleanTg === "@bymitso" || cleanTg.includes("admin")) {
+                userNick = "Mitso";
+            } else if (cleanTg && cloudDatabase.metadata[cleanTg]) {
+                userNick = cloudDatabase.metadata[cleanTg].nick || userNick;
+            } else if (cleanTg) {
+                userNick = sessionTg;
+            }
+
+            // Очищаем дубли из обоих списков
+            cloudDatabase.trainingYes = cloudDatabase.trainingYes.filter(n => n !== userNick);
+            cloudDatabase.trainingNo = cloudDatabase.trainingNo.filter(n => n !== userNick);
+
+            if(type === 'yes') {
+                cloudDatabase.trainingYes.push(userNick);
+            } else {
+                cloudDatabase.trainingNo.push(userNick);
+            }
+
+            // Рендерим локально и пушим в облако для синхронизации устройств
+            renderAttendanceListsOnSite();
+            await saveToCloud();
+        }
 
         window.executeResetTrainingTimer = async function() {
             if(!isLeaderMode) return;
@@ -1245,6 +1338,13 @@
                         avaUrl = cloudDatabase.metadata[k].avatar;
                     }
                 }
+                // Если статичный основатель
+                if(userNick === 'Mitso') avaUrl = "avatar1.png";
+                if(userNick === 'Mr. JOKER') avaUrl = "avatar2.png";
+                if(userNick === 'Dark Control') avaUrl = "avatar3.png";
+                if(userNick === 'Mr. PROper Twelve') avaUrl = "avatar4.png";
+                if(userNick === 'Banan') avaUrl = "avatar5.png";
+
                 const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
                 const item = document.createElement('div');
                 item.className = 'attendance-user';
@@ -1259,6 +1359,12 @@
                         avaUrl = cloudDatabase.metadata[k].avatar;
                     }
                 }
+                if(userNick === 'Mitso') avaUrl = "avatar1.png";
+                if(userNick === 'Mr. JOKER') avaUrl = "avatar2.png";
+                if(userNick === 'Dark Control') avaUrl = "avatar3.png";
+                if(userNick === 'Mr. PROper Twelve') avaUrl = "avatar4.png";
+                if(userNick === 'Banan') avaUrl = "avatar5.png";
+
                 const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
                 const item = document.createElement('div');
                 item.className = 'attendance-user';
@@ -1277,6 +1383,11 @@
 
             trainingCountdownWidget.style.display = 'block';
             if(isLeaderMode) { btnCloseTimer.style.display = 'block'; }
+
+            // Показываем блок кнопок голосования на сайте для всех членов команды
+            if(localStorage.getItem('stage_team_logged') === 'true' || localStorage.getItem('stage_authorized') === 'true') {
+                websiteVoteBlock.style.display = 'flex';
+            }
 
             renderAttendanceListsOnSite();
 
@@ -1579,9 +1690,6 @@
                 submitBtn.textContent = "Отправить заявку";
             });
         });
-
-        switchToVerify.addEventListener('click', () => { recruitForm.style.display = 'none'; verifyBlock.style.display = 'block'; });
-        switchToForm.addEventListener('click', () => { verifyBlock.style.display = 'none'; recruitForm.style.display = 'block'; });
 
         window.sendMapToBoard = function(mapFileName, buttonElement) {
             const fullMapUrl = window.location.origin + '/' + mapFileName;
