@@ -179,26 +179,44 @@
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
-        @keyframes bulbFlicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 35px rgba(0, 242, 254, 0.9), 0 0 15px rgba(0, 242, 254, 0.4); color: #ffffff; }
-            19%, 24%, 55% { opacity: 0.2; text-shadow: none; color: #1e293b; }
-            20%, 21%, 54%, 56% { opacity: 0.8; text-shadow: 0 0 20px rgba(0, 242, 254, 0.5); color: #e2e8f0; }
-        }
-
-        .section-title { font-family: 'Orbitron', sans-serif; font-size: clamp(24px, 5vw, 36px); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; color: #fff; border-bottom: 2px solid #00f2fe; padding-bottom: 10px; text-shadow: 0 0 15px rgba(0, 242, 254, 0.3); text-align: center; }
-        .sub-section-title { font-family: 'Orbitron', sans-serif; font-size: clamp(18px, 4vw, 22px); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 15px; color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); text-align: center; width: 100%; }
-
         /* СОСТАВ КЛАНА */
         .roster-screen { background-image: linear-gradient(rgba(2, 5, 10, 0.75), rgba(2, 5, 10, 0.9)), url('roster_bg.png'); }
         .roster-container { max-width: 1200px; width: 100%; }
         .rank-section { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.2); padding: 25px; border-radius: 6px; backdrop-filter: blur(5px); position: relative; width: 100%; }
         .rank-title { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 20px); color: #00f2fe; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; text-align: center; border-bottom: 1px dashed rgba(0, 242, 254, 0.2); padding-bottom: 10px; }
         
+        .training-admin-block { position: absolute; top: 20px; left: 25px; display: flex; gap: 10px; align-items: center; }
+        .btn-training-trigger { display: none; background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; color: #fff; padding: 6px 14px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
+        .btn-training-trigger:hover { background: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.7); }
+
+        /* Виджет обратного отсчета тренировки */
+        .training-countdown-widget { display: none; width: 100%; max-width: 500px; background: rgba(2, 5, 10, 0.9); border: 2px solid #00f2fe; box-shadow: 0 0 25px rgba(0, 242, 254, 0.35); padding: 20px; border-radius: 8px; margin: 0 auto 25px; text-align: center; font-family: 'Orbitron', sans-serif; position: relative; }
+        
+        /* ИЗМЕНЕНО: Кнопка закрытия таймера (крестик в углу виджета) */
+        .close-timer-btn { display: none; position: absolute; top: 8px; right: 14px; color: rgba(255, 255, 255, 0.3); font-size: 20px; cursor: pointer; transition: color 0.2s; font-family: sans-serif; font-weight: bold; }
+        .close-timer-btn:hover { color: #ff0055; }
+        
+        .training-countdown-title { font-size: 13px; color: #a855f7; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; font-weight: 900; }
+        .training-timer-display { display: flex; justify-content: center; gap: 15px; margin-top: 5px; }
+        .timer-unit-box { background: rgba(15, 23, 42, 0.9); padding: 6px 10px; border-radius: 4px; min-width: 60px; border: 1px solid rgba(0, 242, 254, 0.2); }
+        .timer-unit-box .num { font-size: 20px; color: #fff; font-weight: 900; text-shadow: 0 0 10px #00f2fe; }
+        .timer-unit-box .lbl { font-size: 9px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; font-family: 'Oswald', sans-serif; }
+
+        /* ИЗМЕНЕНО: Стили списков «Кто пойдет / не пойдет» внутри виджета на сайте */
+        .training-attendance-container { display: flex; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); font-family: 'Oswald', sans-serif; text-align: left; }
+        .attendance-column { flex: 1; background: rgba(2, 5, 10, 0.5); padding: 10px; border-radius: 4px; font-size: 13px; }
+        .attendance-column h4 { font-family: 'Orbitron', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .attendance-column.yes h4 { color: #22c55e; }
+        .attendance-column.no h4 { color: #ef4444; }
+        .attendance-list { display: flex; flex-direction: column; gap: 4px; color: #94a3b8; max-height: 100px; overflow-y: auto; }
+        .attendance-user { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+        .attendance-user .micro-ava { width: 14px; height: 14px; border-radius: 50%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
+
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
         .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
         .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; }
+        .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
 
@@ -245,7 +263,6 @@
         .map-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 6px; padding: 15px; display: flex; flex-direction: column; gap: 12px; backdrop-filter: blur(5px); transition: border 0.3s, box-shadow 0.3s, transform 0.2s; cursor: grab; user-select: none; }
         .map-card:active { cursor: grabbing; transform: scale(0.98); }
         .map-card:hover { border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
-        .map-img-holder { width: 100%; height: 140px; background-color: #02050a; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
         .map-img-holder { width: 100%; height: 140px; background-color: #02050a; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
         .map-info { display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
         .map-name { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; }
@@ -375,6 +392,7 @@
             .founders-grid { grid-template-columns: 1fr; }
             
             .welcome-desc-container { padding: 15px; margin-top: 15px; }
+            .training-admin-block { position: static; margin-bottom: 15px; justify-content: center; width: 100%; }
         }
     </style>
 </head>
@@ -411,9 +429,40 @@
     </section>
 
     <section id="roster" class="roster-screen">
+        <div class="training-admin-block">
+            <button type="button" class="btn-training-trigger" id="btnTrainingTrigger"><i class="fa-solid fa-calendar-plus"></i> Тренировка</button>
+        </div>
+
         <h2 class="section-title">Состав клана</h2>
         
         <div id="adminBadge"><i class="fa-solid fa-shield-halved"></i> Режим Лидера Активирован</div>
+
+        <div class="training-countdown-widget" id="trainingCountdownWidget">
+            <span class="close-timer-btn" id="btnCloseTimer" onclick="executeResetTrainingTimer()">&times;</span>
+            
+            <div class="training-countdown-title">⚔️ До тактической тренировки флота:</div>
+            <div class="training-timer-display">
+                <div class="timer-unit-box"><div class="num" id="timerDays">00</div><div class="label">Дн</div></div>
+                <div class="timer-unit-box"><div class="num" id="timerHours">00</div><div class="label">Чис</div></div>
+                <div class="timer-unit-box"><div class="num" id="timerMinutes">00</div><div class="label">Мин</div></div>
+                <div class="timer-unit-box"><div class="num" id="timerSeconds">00</div><div class="label">Сек</div></div>
+            </div>
+
+            <div class="training-attendance-container">
+                <div class="attendance-column yes">
+                    <h4>⚓️ Прибудут в строй:</h4>
+                    <div class="attendance-list" id="attendanceYesList">
+                        <div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>
+                    </div>
+                </div>
+                <div class="attendance-column no">
+                    <h4>❌ Не смогут:</h4>
+                    <div class="attendance-list" id="attendanceNoList">
+                        <div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="roster-container">
             <div class="rank-section">
@@ -576,6 +625,18 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="trainingModalOverlay" style="z-index: 150;">
+        <div class="modal-window" style="max-width: 400px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);">
+            <span class="close-btn" id="closeTrainingModalBtn">&times;</span>
+            <div class="modal-title" style="color: #a855f7; border-bottom-color: rgba(168, 85, 247, 0.2);">Планирование тренировки</div>
+            <div class="form-group">
+                <label>Выберите дату и время начала события</label>
+                <input type="datetime-local" id="inputTrainingDateTime" required style="border-color: #a855f7; font-family: 'Orbitron', sans-serif;">
+            </div>
+            <button type="button" class="btn-submit" id="btnSubmitTraining" style="background: #a855f7; color: #fff;">Готово</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="cabinetModalOverlay" style="z-index: 140;">
         <div class="modal-window" style="max-width: 420px; border-color: #a855f7; box-shadow: 0 0 40px rgba(168, 85, 247, 0.35);">
             <span class="close-btn" id="closeCabinetModalBtn">&times;</span>
@@ -669,6 +730,7 @@
         const TG_CHAT_ID = "-1002619697984"; 
         const TG_THREAD_ID = 5264;          
         const CLAN_ID = "250489";
+        const TRAINING_THREAD_ID = 1;
 
         const BIN_ID = "6a12294c6877513b27c06650"; 
         const MASTER_KEY = "$2a$10$v7z4/8N8GC8M8hitL86knebm9goe4YeILXuk0ApLLcpdRNJIWqjzu"; 
@@ -685,7 +747,6 @@
 
         const APPROVED_TELEGRAMS = ["@bymitso", "@banan4uks", "@Dark_ControI", "@saveliy_li", "@Mr_JOKER017"];
 
-        // Иерархия званий флота STAGE (Прокачка раз в месяц)
         const NAVAL_RANKS = [
             "Юнга", "Матрос", "Старший матрос",
             "Старшина 2 статьи", "Старшина 1 статьи", "Главный старшина", "Главный корабельный старшина",
@@ -725,11 +786,13 @@
         const loginModalOverlay = document.getElementById('loginModalOverlay');
         const statsModalOverlay = document.getElementById('statsModalOverlay');
         const cabinetModalOverlay = document.getElementById('cabinetModalOverlay');
+        const trainingModalOverlay = document.getElementById('trainingModalOverlay');
 
         const closeLawModalBtn = document.getElementById('closeLawModalBtn');
         const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
         const closeStatsModalBtn = document.getElementById('closeStatsModalBtn');
         const closeCabinetModalBtn = document.getElementById('closeCabinetModalBtn');
+        const closeTrainingModalBtn = document.getElementById('closeTrainingModalBtn');
 
         const submitAdminLoginBtn = document.getElementById('submitAdminLoginBtn');
         const adminEmailInput = document.getElementById('adminEmailInput');
@@ -743,6 +806,12 @@
         const excalidrawFrame = document.getElementById('excalidrawFrame');
         const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
+        const btnTrainingTrigger = document.getElementById('btnTrainingTrigger');
+        const btnSubmitTraining = document.getElementById('btnSubmitTraining');
+        const inputTrainingDateTime = document.getElementById('inputTrainingDateTime');
+        const trainingCountdownWidget = document.getElementById('trainingCountdownWidget');
+        const btnCloseTimer = document.getElementById('btnCloseTimer');
+
         const rawTelegramInput = document.getElementById('rawTelegramInput');
         const terminalStatusBox = document.getElementById('terminalStatusBox');
         const parsedNickText = document.getElementById('parsedNickText');
@@ -752,7 +821,10 @@
         let isRosterExpanded = false;
         let isLeaderMode = false;
         let currentParsedData = null;
-        let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [], metadata: {} };
+        let countdownIntervalId = null;
+        
+        // ИЗМЕНЕНО: База данных теперь содержит массивы для отслеживания явки (trainingYes / trainingNo)
+        let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
 
         function openTelegramBot(botUsername) {
@@ -778,11 +850,11 @@
                 }
             }
 
-            // ИСПРАВЛЕНО: Сначала дожидаемся загрузки базы из облака, затем рендерим участников
             await syncWithCloud();
             applyGlobalKickedFilters();
             renderLocalRecruits();
             generateTacticalMapsGrid();
+            initTrainingCountdown(); 
             
             const userTg = localStorage.getItem('stage_user_registered_tg');
             if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
@@ -820,6 +892,9 @@
                         cloudDatabase.banned = data.record.banned || [];
                         cloudDatabase.kickedNicks = data.record.kickedNicks || [];
                         cloudDatabase.metadata = data.record.metadata || {};
+                        cloudDatabase.trainingTime = data.record.trainingTime || null;
+                        cloudDatabase.trainingYes = data.record.trainingYes || [];
+                        cloudDatabase.trainingNo = data.record.trainingNo || [];
                     }
                 }
             } catch (err) { console.error("Ошибка облачной синхронизации:", err); }
@@ -874,8 +949,6 @@
 
             const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
             const registerTimestamp = Date.now();
-            
-            // ИСПРАВЛЕНО: Все ключи сохраняются в едином нижнем регистре
             const targetTgKey = currentParsedData.tg.trim().toLowerCase();
             
             cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
@@ -885,7 +958,8 @@
                 nick: currentParsedData.nick,
                 chatId: currentParsedData.chatId,
                 joinDate: registerTimestamp,
-                rank: "Действующий боец"
+                rank: "Действующий боец",
+                avatar: "" 
             };
             
             cloudDatabase.banned = cloudDatabase.banned.filter(tg => tg !== targetTgKey);
@@ -942,7 +1016,7 @@
         });
         closeLoginModalBtn.addEventListener('click', () => loginModalOverlay.classList.remove('active'));
 
-        window.selectProfileAvatar = function(avatarUrl, element) {
+        window.selectProfileAvatar = async function(avatarUrl, element) {
             document.querySelectorAll('.avatar-picker-item').forEach(item => item.classList.remove('selected'));
             element.classList.add('selected');
             
@@ -953,8 +1027,18 @@
             document.getElementById('cabAvatarIconDefault').style.display = 'none';
             
             refreshMenuCabinetAvatar();
-            // Перерисовываем список участников, чтобы аватарка сразу обновилась в карточке
+
+            let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
+            let cleanTg = sessionTg.trim().toLowerCase();
+            if (cleanTg) {
+                if (!cloudDatabase.metadata[cleanTg]) { cloudDatabase.metadata[cleanTg] = {}; }
+                cloudDatabase.metadata[cleanTg].avatar = avatarUrl;
+                await saveToCloud();
+            }
+            
             renderLocalRecruits();
+            // ИЗМЕНЕНО: Также перерисовываем списки присутствия, чтобы аватарка обновилась и там
+            renderAttendanceListsOnSite();
         }
 
         navCabinetBtn.addEventListener('click', () => {
@@ -1028,6 +1112,178 @@
         });
         closeCabinetModalBtn.addEventListener('click', () => cabinetModalOverlay.classList.remove('active'));
 
+        btnTrainingTrigger.addEventListener('click', () => {
+            if(!isLeaderMode) return;
+            inputTrainingDateTime.value = "";
+            trainingModalOverlay.classList.add('active');
+        });
+        closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
+
+        // ИЗМЕНЕНО: Добавлены инлайн-кнопки «Приду» / «Не могу» к сообщению бота
+        btnSubmitTraining.addEventListener('click', async () => {
+            const dateTimeVal = inputTrainingDateTime.value;
+            if(!dateTimeVal) { alert("Пожалуйста, укажите дату и время!"); return; }
+
+            const targetTimestamp = new Date(dateTimeVal).getTime();
+            if(targetTimestamp <= Date.now()) { alert("Нельзя спланировать тренировку в прошлом!"); return; }
+
+            btnSubmitTraining.textContent = "Отправка в чат...";
+            btnSubmitTraining.disabled = true;
+
+            const formattedDate = new Date(dateTimeVal).toLocaleString('ru-RU', {
+                day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            const messageText = `⚔️ <b>ВНИМАНИЕ, ФЛОТ STAGE! Назначена тренировка!</b>\n\n⚓️ <b>Событие:</b> Тактическая командная тренировка\n📅 <b>Время сбора:</b> ${formattedDate}\n\nВсем участникам быть в полной боевой готовности на тактической доске сайта! Прямая связь в Яндекс Телемост. 🚢🔥`;
+
+            // Генерируем кнопки для голосования в Telegram
+            const replyMarkupButtons = {
+                inline_keyboard: [
+                    [
+                        { text: "⚓️ Прибуду в строй", callback_data: "verify" }, 
+                        { text: "❌ Не смогу", callback_data: "switchToForm" }
+                    ]
+                ]
+            };
+
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: TG_CHAT_ID, 
+                        message_thread_id: TRAINING_THREAD_ID, 
+                        text: messageText, 
+                        parse_mode: 'html',
+                        reply_markup: replyMarkupButtons // Прикрепляем кнопки
+                    })
+                });
+
+                // Сбрасываем старые списки голосования при создании новой тренировки
+                cloudDatabase.trainingTime = targetTimestamp;
+                cloudDatabase.trainingYes = [];
+                cloudDatabase.trainingNo = [];
+                await saveToCloud();
+
+                trainingModalOverlay.classList.remove('active');
+                initTrainingCountdown(); 
+
+                alert("Тренировка успешно запланирована! Уведомление с интерактивными кнопками отправлено в ТГ-чат.");
+            } catch (err) {
+                alert("Произошла ошибка при отправке рапорта боту.");
+            } finally {
+                btnSubmitTraining.textContent = "Готово";
+                btnSubmitTraining.disabled = false;
+            }
+        });
+
+        // ИЗМЕНЕНО: Новая функция «Закрыть таймер» для полного удаления события из базы данных
+        window.executeResetTrainingTimer = async function() {
+            if(!isLeaderMode) return;
+            if(confirm("Вы действительно хотите отменить текущую тренировку и полностью удалить таймер с сайта?")) {
+                cloudDatabase.trainingTime = null;
+                cloudDatabase.trainingYes = [];
+                cloudDatabase.trainingNo = [];
+                await saveToCloud();
+                
+                if (countdownIntervalId) clearInterval(countdownIntervalId);
+                trainingCountdownWidget.style.display = 'none';
+                alert("Событие аннулировано. Таймер скрыт у всех участников.");
+            }
+        }
+
+        // ИЗМЕНЕНО: Отрисовка списков пришедших/непришедших бойцов на сайте внутри виджета
+        function renderAttendanceListsOnSite() {
+            const yesListElement = document.getElementById('attendanceYesList');
+            const noListElement = document.getElementById('attendanceNoList');
+
+            // Заполняем дефолтными данными Mitso, Joker и т.д. для демонстрации, если списки пусты
+            if(cloudDatabase.trainingYes.length === 0 && cloudDatabase.trainingNo.length === 0) {
+                // Если база чистая — выводим заглушку
+                yesListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>`;
+                noListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.2);">Списки пусты</div>`;
+                return;
+            }
+
+            yesListElement.innerHTML = "";
+            noListElement.innerHTML = "";
+
+            if(cloudDatabase.trainingYes.length === 0) yesListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.1);">Никто не записался</div>`;
+            if(cloudDatabase.trainingNo.length === 0) noListElement.innerHTML = `<div style="font-size:11px; color:rgba(255,255,255,0.1);">Никто не записался</div>`;
+
+            // Рендерим тех, кто идет
+            cloudDatabase.trainingYes.forEach(userNick => {
+                let avaUrl = "";
+                // Ищем аватарку пользователя по нику в метаданных
+                for(let k in cloudDatabase.metadata) {
+                    if(cloudDatabase.metadata[k].nick === userNick && cloudDatabase.metadata[k].avatar) {
+                        avaUrl = cloudDatabase.metadata[k].avatar;
+                    }
+                }
+                const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
+                const item = document.createElement('div');
+                item.className = 'attendance-user';
+                item.innerHTML = `<div class="micro-ava" ${inlineAva}></div><span>${userNick}</span>`;
+                yesListElement.appendChild(item);
+            });
+
+            // Рендерим тех, кто не идет
+            cloudDatabase.trainingNo.forEach(userNick => {
+                let avaUrl = "";
+                for(let k in cloudDatabase.metadata) {
+                    if(cloudDatabase.metadata[k].nick === userNick && cloudDatabase.metadata[k].avatar) {
+                        avaUrl = cloudDatabase.metadata[k].avatar;
+                    }
+                }
+                const inlineAva = avaUrl ? `style="background-image:url('${avaUrl}');"` : '';
+                const item = document.createElement('div');
+                item.className = 'attendance-user';
+                item.innerHTML = `<div class="micro-ava" ${inlineAva}></div><span>${userNick}</span>`;
+                noListElement.appendChild(item);
+            });
+        }
+
+        function initTrainingCountdown() {
+            if (countdownIntervalId) clearInterval(countdownIntervalId);
+
+            if (!cloudDatabase.trainingTime || cloudDatabase.trainingTime <= Date.now()) {
+                trainingCountdownWidget.style.display = 'none';
+                return;
+            }
+
+            trainingCountdownWidget.style.display = 'block';
+            
+            // ИЗМЕНЕНО: Показываем кнопку закрытия таймера только Главе клана
+            if(isLeaderMode) {
+                btnCloseTimer.style.display = 'block';
+            }
+
+            // Отрисовываем списки присутствия
+            renderAttendanceListsOnSite();
+
+            function updateTimer() {
+                const diff = cloudDatabase.trainingTime - Date.now();
+                if (diff <= 0) {
+                    trainingCountdownWidget.style.display = 'none';
+                    clearInterval(countdownIntervalId);
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('timerDays').textContent = days.toString().padStart(2, '0');
+                document.getElementById('timerHours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('timerMinutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('timerSeconds').textContent = seconds.toString().padStart(2, '0');
+            }
+
+            updateTimer();
+            countdownIntervalId = setInterval(updateTimer, 1000);
+        }
+
         submitAdminLoginBtn.addEventListener('click', () => {
             const inputLogin = adminEmailInput.value.trim().toLowerCase();
             const inputPassword = adminPasswordInput.value.trim();
@@ -1043,6 +1299,7 @@
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
                 activateLeaderMode(); unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
+                initTrainingCountdown(); // Перезапускаем таймер, чтобы появилась кнопка закрытия
                 return;
             }
 
@@ -1055,7 +1312,6 @@
                 return;
             }
 
-            // ИСПРАВЛЕНО: Проверка пароля и логина теперь полностью регистронезависима
             if (cloudDatabase.pairs[inputLogin] && cloudDatabase.pairs[inputLogin] === inputPassword) {
                 localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', adminEmailInput.value.trim());
@@ -1064,7 +1320,6 @@
                 }
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
-                // Сразу обновляем список участников для правильного отображения карточки
                 renderLocalRecruits();
                 alert("Верификация пройдена успешно. Добро пожаловать в тактический штаб STAGE!");
                 return;
@@ -1097,6 +1352,8 @@
 
         function activateLeaderMode() {
             isLeaderMode = true; adminBadge.style.display = 'block'; navStatsBtn.style.display = 'block'; 
+            btnTrainingTrigger.style.display = 'block'; 
+            if(btnCloseTimer) btnCloseTimer.style.display = 'block'; // Показываем крестик закрытия админу
             navLoginBtn.innerHTML = `<i class="fa-solid fa-user-gear" style="color:#ff0055;"></i> Админ`;
             navLoginBtn.style.background = "rgba(255, 0, 85, 0.15)"; navLoginBtn.style.borderColor = "#ff0055";
             document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block');
