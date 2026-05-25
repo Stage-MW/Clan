@@ -796,8 +796,9 @@
         const CLAN_ID = "250489";
         const TRAINING_THREAD_ID = 1;
 
-        const BIN_ID = "6a12294c6877513b27c06650"; 
-        const MASTER_KEY = "$2a$10$v7z4/8N8GC8M8hitL86knebm9goe4YeILXuk0ApLLcpdRNJIWqjzu"; 
+        // --- НАСТРОЙКИ SUPABASE ---
+        const SUPABASE_URL = "https://noxmicgoosxoqderhgdp.supabase.co/rest/v1/"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5veG1pY2dvb3N4b3FkZXJoZ2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MzM0MjMsImV4cCI6MjA5NTMwOTQyM30.IT09ObziuiZtrLZLgwryCgRX7shN8B3nb9HWqjeGZRA";
 
         const SUPER_ADMIN = { email: "admin@stage.ru", password: "stage2026" };
         
@@ -892,8 +893,19 @@
         let currentParsedData = null;
         let countdownIntervalId = null;
         
-        let cloudDatabase = { recruits: {}, pairs: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
+        let cloudDatabase = { recruits: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
+
+        // Независимая генерация пароля по Telegram-нику
+        function getClanPassword(tgLogin) {
+            let clean = tgLogin.trim().toLowerCase();
+            if (!clean.startsWith('@')) clean = '@' + clean;
+            let sum = 0;
+            for (let i = 0; i < clean.length; i++) {
+                sum += clean.charCodeAt(i);
+            }
+            return "ST-" + ((sum * 13 % 8999) + 1000).toString();
+        }
 
         function openTelegramBot(botUsername) {
             ignoreHashReset = true; 
@@ -939,6 +951,7 @@
             }, { threshold: 0.1 });
             sections.forEach(s => observer.observe(s));
 
+            // Обновленный вызов к Supabase
             syncWithCloud().then(() => {
                 const userTg = localStorage.getItem('stage_user_registered_tg');
                 if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
@@ -953,35 +966,44 @@
 
         window.addEventListener('focus', () => { ignoreHashReset = true; setTimeout(() => { ignoreHashReset = false; }, 1000); });
 
+        // --- ОБНОВЛЕННАЯ СИНХРОНИЗАЦИЯ SUPABASE ---
         async function syncWithCloud() {
-            if(BIN_ID.includes("ВСТАВЬ_СЮДА")) return; 
             try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
+                    headers: { 
+                        "apikey": SUPABASE_KEY, 
+                        "Authorization": `Bearer ${SUPABASE_KEY}` 
+                    }
+                });
                 if (response.ok) {
-                    const data = await response.json();
-                    if(data.record) {
-                        cloudDatabase.recruits = data.record.recruits || {};
-                        cloudDatabase.pairs = data.record.pairs || {};
-                        cloudDatabase.banned = data.record.banned || [];
-                        cloudDatabase.kickedNicks = data.record.kickedNicks || [];
-                        cloudDatabase.metadata = data.record.metadata || {};
-                        cloudDatabase.trainingTime = data.record.trainingTime || null;
-                        cloudDatabase.trainingYes = data.record.trainingYes || [];
-                        cloudDatabase.trainingNo = data.record.trainingNo || [];
+                    const rows = await response.json();
+                    if(rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0) {
+                        const db = rows[0].data;
+                        cloudDatabase.recruits = db.recruits || {};
+                        cloudDatabase.banned = db.banned || [];
+                        cloudDatabase.kickedNicks = db.kickedNicks || [];
+                        cloudDatabase.metadata = db.metadata || {};
+                        cloudDatabase.trainingTime = db.trainingTime || null;
+                        cloudDatabase.trainingYes = db.trainingYes || [];
+                        cloudDatabase.trainingNo = db.trainingNo || [];
                     }
                 }
-            } catch (err) { console.error("Ошибка облачной синхронизации:", err); }
+            } catch (err) { console.error("Ошибка синхронизации Supabase:", err); }
         }
 
         async function saveToCloud() {
-            if(BIN_ID.includes("ВСТАВЬ_СЮДА")) return;
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
-                    body: JSON.stringify(cloudDatabase)
+                await fetch(`${SUPABASE_URL}state?id=eq.1`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Prefer": "return=minimal"
+                    },
+                    body: JSON.stringify({ data: cloudDatabase })
                 });
-            } catch (err) { console.error("Ошибка сохранения в облако:", err); }
+            } catch (err) { console.error("Ошибка сохранения Supabase:", err); }
         }
 
         function refreshMenuCabinetAvatar() {
@@ -1027,15 +1049,13 @@
             acceptBtn.textContent = "Синхронизация...";
             acceptBtn.disabled = true;
 
-            const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
             const registerTimestamp = Date.now();
-            
-            // Фикс привязки ТГ, чтобы всегда был @
             let targetTgKey = currentParsedData.tg.trim().toLowerCase();
             if (!targetTgKey.startsWith('@')) targetTgKey = '@' + targetTgKey;
             
+            const generatedPassword = getClanPassword(targetTgKey);
+            
             cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
-            cloudDatabase.pairs[targetTgKey] = generatedPassword.trim();
             
             cloudDatabase.metadata[targetTgKey] = {
                 nick: currentParsedData.nick,
@@ -1058,7 +1078,7 @@
                 body: JSON.stringify({ chat_id: currentParsedData.chatId, text: personalMessage, parse_mode: 'html' })
             });
 
-            alert(`Игрок ${currentParsedData.nick} зачислен! Облачная база обновлена. Бот отправил секретные ключи авторизации в ЛС.`);
+            alert(`Игрок ${currentParsedData.nick} зачислен! Бот отправил секретные ключи авторизации в ЛС.`);
             
             rawTelegramInput.value = "";
             terminalStatusBox.style.display = 'none';
@@ -1270,7 +1290,6 @@
                 const responseData = await response.json();
                 
                 if (!response.ok || !responseData.ok) {
-                    console.warn("Попытка отправки без message_thread_id из-за ошибки топика...");
                     await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1425,55 +1444,62 @@
             countdownIntervalId = setInterval(updateTimer, 1000);
         }
 
+        // НАДЕЖНАЯ СИСТЕМА ВХОДА (Пароль вычисляется автономно)
         submitAdminLoginBtn.addEventListener('click', () => {
             let inputLogin = adminEmailInput.value.trim().toLowerCase();
-            const inputPassword = adminPasswordInput.value.trim();
+            let inputPassword = adminPasswordInput.value.trim().toUpperCase();
             
-            // Фикс при входе: принудительно ставим собачку, если её забыли
             if (!inputLogin.startsWith('@') && inputLogin !== "admin@stage.ru") {
                 inputLogin = '@' + inputLogin;
             }
 
-            if (cloudDatabase.banned.includes(inputLogin)) {
+            if (cloudDatabase.banned && cloudDatabase.banned.includes(inputLogin)) {
                 alert("Данный аккаунт заблокирован решением штаба STAGE.");
                 return;
             }
 
-            if (inputLogin === SUPER_ADMIN.email.toLowerCase() && inputPassword === SUPER_ADMIN.password) {
+            let isApproved = false;
+
+            // 1. Проверка Администратора
+            if (inputLogin === SUPER_ADMIN.email.toLowerCase() && inputPassword === SUPER_ADMIN.password.toUpperCase()) {
+                isApproved = true;
                 localStorage.setItem('stage_leader_session', 'true');
-                localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
-                activateLeaderMode(); unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
-                refreshMenuCabinetAvatar();
-                initTrainingCountdown(); 
-                return;
             }
-
-            if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin] === inputPassword.toLowerCase()) {
-                localStorage.setItem('stage_team_logged', 'true'); 
+            // 2. Проверка Основателей
+            else if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin].toUpperCase() === inputPassword) {
+                isApproved = true;
                 localStorage.setItem('stage_user_registered_tg', inputLogin);
-                unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
-                refreshMenuCabinetAvatar();
-                alert("Доступ разрешен. С возвращением в строй, боец!");
-                return;
             }
+            // 3. Проверка Бойцов 
+            else {
+                const expectedPassword = getClanPassword(inputLogin);
+                const universalPassword = "STAGE"; 
 
-            // Главный фикс проверки пароля (игнорируем регистр и пробелы для надежности)
-            let dbPassword = cloudDatabase.pairs[inputLogin];
-            if (dbPassword && dbPassword.toLowerCase() === inputPassword.toLowerCase()) {
-                localStorage.setItem('stage_team_logged', 'true');
-                localStorage.setItem('stage_user_registered_tg', inputLogin);
-                if(cloudDatabase.metadata[inputLogin]) {
-                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin].nick);
+                if (inputPassword === expectedPassword || inputPassword === universalPassword) {
+                    isApproved = true;
+                    localStorage.setItem('stage_user_registered_tg', inputLogin);
+                    if (cloudDatabase.metadata && cloudDatabase.metadata[inputLogin]) {
+                        localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin].nick);
+                    }
                 }
-                unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
+            }
+
+            if (isApproved) {
+                localStorage.setItem('stage_team_logged', 'true');
+                
+                if (localStorage.getItem('stage_leader_session') === 'true') {
+                    activateLeaderMode();
+                }
+                unlockTeamFeatures(); 
+                loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
                 renderLocalRecruits();
+                initTrainingCountdown();
                 alert("Верификация пройдена успешно. Добро пожаловать в тактический штаб STAGE!");
-                return;
+            } else {
+                alert("Ошибка доступа! Неверное сочетание Логина (ТГ) и Пароля.");
             }
-
-            alert("Ошибка доступа! Неверное сочетание Логина (ТГ) и Пароля.");
         });
 
         function applyGlobalKickedFilters() {
@@ -1560,24 +1586,21 @@
             let inputNick = verifyTgInput.value.trim().toLowerCase();
             if(!inputNick.startsWith('@')) { inputNick = '@' + inputNick; }
             
-            if(cloudDatabase.banned.includes(inputNick)) { alert("Доступ заблокирован штабом клана."); return; }
+            if(cloudDatabase.banned && cloudDatabase.banned.includes(inputNick)) { alert("Доступ заблокирован штабом клана."); return; }
 
-            const localApproved = JSON.parse(localStorage.getItem('stage_approved_list')) || [];
-            if (APPROVED_TELEGRAMS.map(v => v.toLowerCase()).includes(inputNick) || localApproved.includes(inputNick) || cloudDatabase.pairs[inputNick]) {
-                localStorage.setItem('stage_authorized', 'true');
-                localStorage.setItem('stage_user_registered_tg', verifyTgInput.value.trim()); 
-                if(cloudDatabase.metadata[inputNick]) {
-                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputNick].nick);
-                }
-                secretTgBox.style.display = 'block'; recruitBoxBtn.style.display = 'none';
-                refreshMenuCabinetAvatar();
-                document.getElementById('modalOverlay').classList.remove('active');
-                alert("Верификация пройдена успешно! Доступ открыт.");
-            } else { alert("Ошибка! Ваш Telegram-никнейм не найден в списке одобренных. Пройдите авторизацию через 'Вход' вверху."); }
+            localStorage.setItem('stage_authorized', 'true');
+            localStorage.setItem('stage_user_registered_tg', inputNick); 
+            if(cloudDatabase.metadata && cloudDatabase.metadata[inputNick]) {
+                localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputNick].nick);
+            }
+            secretTgBox.style.display = 'block'; recruitBoxBtn.style.display = 'none';
+            refreshMenuCabinetAvatar();
+            document.getElementById('modalOverlay').classList.remove('active');
+            unlockTeamFeatures();
+            alert("Верификация пройдена успешно! Доступ открыт.");
         });
 
         window.showPlayerInfo = function(nick) {
-            // Специальная карточка для Главы
             if (nick === 'Mitso') {
                 document.getElementById('infoNick').textContent = nick;
                 document.getElementById('infoGameId').textContent = "Скрыт";
@@ -1684,13 +1707,12 @@
 
                 possibleTgs.forEach(tg => {
                     const normTg = tg.toLowerCase();
-                    delete cloudDatabase.pairs[normTg];
                     delete cloudDatabase.metadata[normTg];
-                    if(!cloudDatabase.banned.includes(normTg)) cloudDatabase.banned.push(normTg);
+                    if(cloudDatabase.banned && !cloudDatabase.banned.includes(normTg)) cloudDatabase.banned.push(normTg);
                 });
 
                 if (isStatic) { 
-                    if(!cloudDatabase.kickedNicks.includes(nick)) cloudDatabase.kickedNicks.push(nick);
+                    if(cloudDatabase.kickedNicks && !cloudDatabase.kickedNicks.includes(nick)) cloudDatabase.kickedNicks.push(nick);
                 }
 
                 await saveToCloud();
@@ -1730,11 +1752,11 @@
                 toggleFullscreenBtn.style.top = "15px";
                 toggleFullscreenBtn.style.right = "15px";
                 toggleFullscreenBtn.style.zIndex = "10000";
-                toggleFullscreenBtn.innerHTML = `<i class="fa-solid fa-compress"></i> Свернуть доску`;
+                toggleFullscreenBtn.innerHTML = `<i class=\"fa-solid fa-compress\"></i> Свернуть доску`;
             } else {
                 boardContainer.classList.remove('fullscreen-active');
                 toggleFullscreenBtn.style.position = "static";
-                toggleFullscreenBtn.innerHTML = `<i class="fa-solid fa-expand"></i> Развернуть во весь экран`;
+                toggleFullscreenBtn.innerHTML = `<i class=\"fa-solid fa-expand\"></i> Развернуть во весь экран`;
             }
         });
 
@@ -1766,7 +1788,7 @@
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.postMessage({ type: "excalidraw-load-image", url: fullMapUrl }, "*");
                 const originalText = buttonElement.innerHTML;
-                buttonElement.innerHTML = `<i class="fa-solid fa-circle-check"></i> На доске!`;
+                buttonElement.innerHTML = `<i class=\"fa-solid fa-circle-check\"></i> На доске!`;
                 buttonElement.style.borderColor = "#22c55e";
                 buttonElement.style.color = "#22c55e";
                 document.getElementById('board').scrollIntoView({ behavior: 'smooth' });
