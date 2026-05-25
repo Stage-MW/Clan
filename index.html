@@ -274,6 +274,7 @@
         .success-result { display: none; text-align: center; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
         .stats-item { background: #02050a; border: 1px solid rgba(168, 85, 247, 0.3); padding: 12px; border-radius: 4px; text-align: center; }
         .stats-item .num { font-family: 'Orbitron', sans-serif; font-size: 26px; color: #a855f7; font-weight: 900; text-shadow: 0 0 10px rgba(168,85,247,0.4); }
         .stats-item .label { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 3px; letter-spacing: 0.5px; }
@@ -292,8 +293,9 @@
             .btn-nav-login { padding: 4px 10px; font-size: 9px; }
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { padding: 60px 10px 80px; background-attachment: scroll; }
             
-            .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-            .player-card { flex: none; max-width: none; width: 100%; font-size: 14px; padding: 10px 12px; }
+            /* ЧИНИМ СЕТКУ УЧАСТНИКОВ НА ТЕЛЕФОНЕ (Убран жесткий grid-template-columns с display:none, заменено на гибкий flex/flex-wrap) */
+            .players-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+            .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; height: auto !important; }
             .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
             .toggle-roster-btn { display: block; }
             
@@ -382,7 +384,7 @@
         <div class="lock-overlay-box" id="mapsLockBox">
             <i class="fa-solid fa-building-shield"></i>
             <h3>Доступ Ограничен</h3>
-            <p>Тактические карты доступны исключительно действующим членам клана STAGE. Пожалуйста, авторизуйтесь через терминал "Вход" в верхнем меню.</p>
+            <p>Тактические карты доступны исключительно действующим членам клана STAGE. Пожалуйста, авторизуйтесь через terminal "Вход" в верхнем меню.</p>
         </div>
         <div class="maps-grid" id="mapsActualGrid" style="display: none; width: 100%;"></div>
     </section>
@@ -748,6 +750,7 @@
             }
         });
 
+        // ИСПРАВЛЕНО: Убрана отправка сообщения в общую группу `TG_CHAT_ID`. Данные летят только игроку в ЛС.
         window.executeTerminalApprove = async function() {
             if(!isLeaderMode || !currentParsedData) return;
             const acceptBtn = document.getElementById('terminalAcceptBtn');
@@ -764,15 +767,7 @@
 
             await saveToCloud();
 
-            const groupMessage = `🟢 <b>Игрок ${currentParsedData.nick} ПРИНЯТ в клан STAGE!</b>\n\n👤 <b>Логин (ТГ Тэг):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> <code>${CLAN_ID}</code>\n\nДанные доступа высланы в личные сообщения бойца.`;
-
             const personalMessage = `🎉 <b>Приветствуем на борту, боец ${currentParsedData.nick}!</b>\n\nВаш рапорт в клан <b>STAGE</b> успешно утвержден Руководством флота!\n\n🔐 <b>Ваши персональные ключи доступа к Штабу:</b>\n👤 <b>Логин (Ваш ТГ):</b> <code>${currentParsedData.tg}</code>\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n🆔 <b>ID Клана:</b> <code>${CLAN_ID}</code>\n\n⚓️ <b>Секретные шлюзы коммуникации:</b>\n✈️ Telegram чат: https://t.me/+0kNCkvxktdozZTYy\n\nВозвращайтесь на сайт, авторизуйтесь через терминал "Вход" — Добро Пожаловать в клан STAGE! 🚢🔥`;
-
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TG_CHAT_ID, message_thread_id: TG_THREAD_ID, text: groupMessage, parse_mode: 'html' })
-            });
 
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -780,7 +775,7 @@
                 body: JSON.stringify({ chat_id: currentParsedData.chatId, text: personalMessage, parse_mode: 'html' })
             });
 
-            alert(`Игрок ${currentParsedData.nick} зачислен! Облачная база обновлена. Бот отправил уведомление в ЛС.`);
+            alert(`Игрок ${currentParsedData.nick} зачислен! Облачная база обновлена. Бот отправил секретные ключи авторизации в ЛС.`);
             
             rawTelegramInput.value = "";
             terminalStatusBox.style.display = 'none';
@@ -902,7 +897,6 @@
         });
         closeStatsModalBtn.addEventListener('click', () => statsModalOverlay.classList.remove('active'));
 
-        // ИСПРАВЛЕНО: Кнопка "На доску" теперь автоматически транслирует изображение прямо во фрейм Excalidraw!
         function generateTacticalMapsGrid() {
             const container = document.getElementById('mapsActualGrid');
             container.innerHTML = "";
@@ -1065,22 +1059,18 @@
         switchToVerify.addEventListener('click', () => { recruitForm.style.display = 'none'; verifyBlock.style.display = 'block'; });
         switchToForm.addEventListener('click', () => { verifyBlock.style.display = 'none'; recruitForm.style.display = 'block'; });
 
-        // ДОБАВЛЕНО: Прямая загрузка изображения на доску без использования буфера обмена!
         window.sendMapToBoard = function(mapFileName, buttonElement) {
             const fullMapUrl = window.location.origin + '/' + mapFileName;
             const iframe = document.getElementById('excalidrawFrame');
             
             if (iframe && iframe.contentWindow) {
-                // Отправляем команду во фрейм Excalidraw загрузить картинку
                 iframe.contentWindow.postMessage({ type: "excalidraw-load-image", url: fullMapUrl }, "*");
                 
-                // Визуальный отклик на кнопке
                 const originalText = buttonElement.innerHTML;
                 buttonElement.innerHTML = `<i class="fa-solid fa-circle-check"></i> На доске!`;
                 buttonElement.style.borderColor = "#22c55e";
                 buttonElement.style.color = "#22c55e";
                 
-                // Плавно скроллим игрока к доске, чтобы он сразу увидел результат
                 document.getElementById('board').scrollIntoView({ behavior: 'smooth' });
                 
                 setTimeout(() => {
