@@ -1007,11 +1007,15 @@
             const idMatch = val.match(/(?:CID:)\s*([^\n⚖️]+)/i);
 
             if (nickMatch && tgMatch && idMatch) {
+                // Тотальная очистка ТГ и ID прямо во время парсинга от мусора при копировании
+                let cleanTg = tgMatch[1].replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+                if (!cleanTg.startsWith('@')) cleanTg = '@' + cleanTg;
+
                 currentParsedData = { 
                     nick: nickMatch[1].trim(), 
                     gameId: gameIdMatch ? gameIdMatch[1].trim() : "Не указан",
-                    tg: tgMatch[1].trim(), 
-                    chatId: idMatch[1].trim() 
+                    tg: cleanTg, 
+                    chatId: idMatch[1].replace(/[\s\u200B-\u200D\uFEFF]/g, '')
                 };
                 parsedNickText.textContent = currentParsedData.nick;
                 parsedGameIdText.textContent = currentParsedData.gameId;
@@ -1030,9 +1034,8 @@
             const generatedPassword = "ST-" + Math.floor(1000 + Math.random() * 9000);
             const registerTimestamp = Date.now();
             
-            // Фикс привязки ТГ, чтобы всегда был @
-            let targetTgKey = currentParsedData.tg.trim().toLowerCase();
-            if (!targetTgKey.startsWith('@')) targetTgKey = '@' + targetTgKey;
+            // Ключ базы данных теперь гарантированно 100% чистый
+            let targetTgKey = currentParsedData.tg.toLowerCase();
             
             cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
             cloudDatabase.pairs[targetTgKey] = generatedPassword.trim();
@@ -1426,20 +1429,23 @@
         }
 
         submitAdminLoginBtn.addEventListener('click', () => {
-            let inputLogin = adminEmailInput.value.trim().toLowerCase();
-            const inputPassword = adminPasswordInput.value.trim();
+            let rawLogin = adminEmailInput.value.toLowerCase();
+            let rawPassword = adminPasswordInput.value.toLowerCase();
             
-            // Фикс при входе: принудительно ставим собачку, если её забыли
-            if (!inputLogin.startsWith('@') && inputLogin !== "admin@stage.ru") {
-                inputLogin = '@' + inputLogin;
+            // Фикс: Тотальная очистка от невидимых символов и случайных пробелов
+            let cleanLogin = rawLogin.replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+            let cleanPassword = rawPassword.replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+
+            if (!cleanLogin.startsWith('@') && cleanLogin !== "admin@stage.ru") {
+                cleanLogin = '@' + cleanLogin;
             }
 
-            if (cloudDatabase.banned.includes(inputLogin)) {
+            if (cloudDatabase.banned.includes(cleanLogin)) {
                 alert("Данный аккаунт заблокирован решением штаба STAGE.");
                 return;
             }
 
-            if (inputLogin === SUPER_ADMIN.email.toLowerCase() && inputPassword === SUPER_ADMIN.password) {
+            if (cleanLogin === SUPER_ADMIN.email.toLowerCase() && adminPasswordInput.value.trim() === SUPER_ADMIN.password) {
                 localStorage.setItem('stage_leader_session', 'true');
                 localStorage.setItem('stage_team_logged', 'true');
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
@@ -1449,22 +1455,45 @@
                 return;
             }
 
-            if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin] === inputPassword.toLowerCase()) {
+            // Проверка базовых мемберов
+            let isBaseMember = false;
+            for(let baseUser in BASE_CLAN_MEMBERS) {
+                if (baseUser === cleanLogin && BASE_CLAN_MEMBERS[baseUser].replace(/[\s\u200B-\u200D\uFEFF]/g, '') === cleanPassword) {
+                    isBaseMember = true;
+                    break;
+                }
+            }
+
+            if (isBaseMember) {
                 localStorage.setItem('stage_team_logged', 'true'); 
-                localStorage.setItem('stage_user_registered_tg', inputLogin);
+                localStorage.setItem('stage_user_registered_tg', cleanLogin);
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
                 alert("Доступ разрешен. С возвращением в строй, боец!");
                 return;
             }
 
-            // Главный фикс проверки пароля (игнорируем регистр и пробелы для надежности)
-            let dbPassword = cloudDatabase.pairs[inputLogin];
-            if (dbPassword && dbPassword.toLowerCase() === inputPassword.toLowerCase()) {
+            // ГЛАВНЫЙ ФИКС: Умный поиск по базе данных с учетом мусора в облаке
+            let isFound = false;
+            let matchedTg = cleanLogin;
+
+            for (let dbLogin in cloudDatabase.pairs) {
+                let safeDbLogin = dbLogin.toLowerCase().replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+                if (safeDbLogin === cleanLogin) {
+                    let safeDbPassword = cloudDatabase.pairs[dbLogin].toLowerCase().replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+                    if (safeDbPassword === cleanPassword) {
+                        isFound = true;
+                        matchedTg = dbLogin; // Возвращаем оригинальный логин из базы
+                        break;
+                    }
+                }
+            }
+
+            if (isFound) {
                 localStorage.setItem('stage_team_logged', 'true');
-                localStorage.setItem('stage_user_registered_tg', inputLogin);
-                if(cloudDatabase.metadata[inputLogin]) {
-                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[inputLogin].nick);
+                localStorage.setItem('stage_user_registered_tg', matchedTg);
+                if(cloudDatabase.metadata[matchedTg]) {
+                    localStorage.setItem('stage_cached_nick', cloudDatabase.metadata[matchedTg].nick);
                 }
                 unlockTeamFeatures(); loginModalOverlay.classList.remove('active');
                 refreshMenuCabinetAvatar();
