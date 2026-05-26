@@ -156,18 +156,19 @@
     letter-spacing: clamp(6px, 1.5vw, 18px); 
     text-transform: uppercase; 
     color: #ffffff; 
-    animation: smoothPulse 4s ease-in-out infinite; /* 4 секунды, плавно туда-обратно */
+    animation: colorShiftThree 9s linear infinite; /* 9 секунд для плавного прохода через 3 цвета */
     text-align: center; 
 }
 
-@keyframes smoothPulse {
+@keyframes colorShiftThree {
     0%, 100% {
-        text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
-        color: rgba(255, 255, 255, 0.8);
+        text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; /* Бирюзовый */
     }
-    50% {
-        text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe, 0 0 5px #00f2fe;
-        color: #ffffff;
+    33% {
+        text-shadow: 0 0 35px #a855f7, 0 0 15px #a855f7; /* Фиолетовый */
+    }
+    66% {
+        text-shadow: 0 0 35px #ff8c00, 0 0 15px #ff8c00; /* Оранжевый */
     }
 }
 
