@@ -428,9 +428,12 @@
             .players-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
             .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; height: auto !important; }
             .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
-            .toggle-roster-btn { display: block; }
+            .toggle-roster-btn { display: block; margin-top: 15px; }
             
+            /* СЕТКА КАРТ НА ТЕЛЕФОНЕ */
             .maps-grid { grid-template-columns: 1fr; gap: 15px; }
+            .maps-grid.collapsed .map-card:nth-child(n+2) { display: none !important; }
+            
             .board-container { height: 50vh; }
             .board-container.fullscreen-active { height: 100vh; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -438,7 +441,8 @@
             
             .welcome-desc-container { padding: 15px; margin-top: 15px; }
             .training-admin-block { position: static; margin-bottom: 15px; justify-content: center; width: 100%; }
-            .avatar-picker-grid { grid-template-columns: repeat(3, 1fr); }
+            .avatar-picker-grid { grid-template-columns: repeat(3, 1fr); max-height: 180px; overflow-y: auto; }
+            .modal-window { padding: 20px; }
         }
     </style>
 </head>
@@ -466,9 +470,7 @@
         <h1>Stage</h1>
         
         <div class="welcome-desc-container">
-            <p class="welcome-desc-p">Добро пожаловать в клан STAGE — киберспортивную команду, которая уверенно держит лидерские позиции в СНГ и на мировой арене.</p>
-            <p class="welcome-desc-p">Мы — объединение сильнейших игроков, профессионалов своего дела и настоящих фанатов Modern Warships.</p>
-            <p class="welcome-desc-p">В составе STAGE — игроки Top 1, Top 2 и Top 3 мира, победители и призёры множества турниров, люди, которые ежедневно доказывают своё превосходство в бою.</p>
+            <p class="welcome-desc-p">Добро пожаловать в клан STAGE</p>
             <p class="welcome-desc-p">Здесь ценятся скилл, дисциплина, командная игра и стремление быть лучшими.</p>
             <p class="welcome-desc-p">STAGE — это не просто клан. Это место, где рождаются победы.</p>
         </div>
@@ -521,12 +523,12 @@
                 <div class="players-grid" id="playersGrid">
                     <div class="player-card leader" data-nick="Mitso" onclick="showPlayerInfo('Mitso')">
                         <div class="name-wrapper">
-                            <div class="roster-avatar" style="background-image: url('avatar1.png');"></div>
+                            <div class="roster-avatar" style="background-image: none;"></div>
                             <span>Mitso</span>
                         </div>
                         <span class="tag">Глава</span>
                     </div>
-                    </div>
+                </div>
                 <button type="button" class="toggle-roster-btn" id="toggleRosterBtn">Показать всех участников</button>
             </div>
         </div>
@@ -551,7 +553,8 @@
             <h3>Доступ Ограничен</h3>
             <p>Тактические карты доступны исключительно действующим членам клана STAGE. Пожалуйста, авторизуйтесь через терминал "Вход" в верхнем меню.</p>
         </div>
-        <div class="maps-grid" id="mapsActualGrid" style="display: none; width: 100%;"></div>
+        <div class="maps-grid collapsed" id="mapsActualGrid" style="display: none; width: 100%;"></div>
+        <button type="button" class="toggle-roster-btn" id="toggleMapsBtn" style="display: none; margin-top: 20px;">Показать все карты</button>
     </section>
 
     <section id="board" class="board-screen">
@@ -770,6 +773,8 @@
                 <div class="stats-item"><div class="num" id="statConversionRate">0%</div><div class="label">Конверсия штаба</div></div>
             </div>
 
+            <button type="button" class="btn-submit" id="resetStatsBtn" style="background:#ef4444; color:#fff; margin-top:10px; font-size:11px;">Сбросить статистику</button>
+
             <div style="border-top: 1px solid rgba(168, 85, 247, 0.2); margin-top: 15px; padding-top: 15px;">
                 <div class="rank-title" style="color:#00f2fe; font-size:14px; border:none; margin-bottom:5px; text-align:left;">Обработка рапортов Telegram</div>
                 <div class="form-group">
@@ -797,6 +802,7 @@
         const TG_THREAD_ID = 5264;          
         const CLAN_ID = "250489";
         const TRAINING_THREAD_ID = 1;
+        const FOUNDATION_DATE = new Date("2026-05-26T00:00:00"); 
 
         // --- НАСТРОЙКИ SUPABASE ---
         const SUPABASE_URL = "https://noxmicgoosxoqderhgdp.supabase.co/rest/v1/"; 
@@ -889,6 +895,8 @@
         const parsedTgText = document.getElementById('parsedTgText');
         const parsedIdText = document.getElementById('parsedIdText');
         const parsedGameIdText = document.getElementById('parsedGameIdText');
+        
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
 
         let isRosterExpanded = false;
         let isLeaderMode = false;
@@ -897,9 +905,8 @@
         
         let cloudDatabase = { recruits: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
-        let isCloudSynced = false; // Флаг успешной загрузки, чтобы не затереть базу пустыми данными
+        let isCloudSynced = false; 
 
-        // Независимая генерация пароля по Telegram-нику
         function getClanPassword(tgLogin) {
             let clean = tgLogin.trim().toLowerCase();
             if (!clean.startsWith('@')) clean = '@' + clean;
@@ -954,7 +961,6 @@
             }, { threshold: 0.1 });
             sections.forEach(s => observer.observe(s));
 
-            // Загружаем базу при старте
             syncWithCloud().then(() => {
                 const userTg = localStorage.getItem('stage_user_registered_tg');
                 if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
@@ -966,9 +972,13 @@
                 initTrainingCountdown();
             });
 
-            // Автообновление списка участников для синхронизации в реальном времени
             setInterval(() => {
                 syncWithCloud().then(() => {
+                    const userTg = localStorage.getItem('stage_user_registered_tg');
+                    if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
+                        forceAbsoluteLogout();
+                        return;
+                    }
                     applyGlobalKickedFilters();
                     renderLocalRecruits();
                     renderAttendanceListsOnSite();
@@ -978,10 +988,8 @@
 
         window.addEventListener('focus', () => { ignoreHashReset = true; setTimeout(() => { ignoreHashReset = false; }, 1000); });
 
-        // --- БЕЗОПАСНАЯ СИНХРОНИЗАЦИЯ SUPABASE ---
         async function syncWithCloud() {
             try {
-                // Блокируем кэш, чтобы всегда получать новые данные
                 const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
                     headers: { 
                         "apikey": SUPABASE_KEY, 
@@ -1001,19 +1009,17 @@
                         cloudDatabase.trainingYes = db.trainingYes || [];
                         cloudDatabase.trainingNo = db.trainingNo || [];
                     }
-                    isCloudSynced = true; // Подтверждаем, что данные получены успешно
+                    isCloudSynced = true; 
                 }
             } catch (err) { console.error("Ошибка синхронизации Supabase:", err); }
         }
 
         async function saveToCloud() {
             if (!isCloudSynced) {
-                console.warn("Защита: попытка сохранения до загрузки базы отменена, чтобы не стереть чужие данные.");
                 await syncWithCloud();
                 if (!isCloudSynced) return; 
             }
             try {
-                // Скачиваем самые свежие данные перед записью, чтобы не стереть то, что кто-то добавил секунду назад
                 const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
                     headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` },
                     cache: 'no-store'
@@ -1026,12 +1032,10 @@
                     if(rows.length > 0 && rows[0].data) {
                         const db = rows[0].data;
                         
-                        // Склеиваем старые и новые данные (Merge)
                         let mergedRecruits = { ...db.recruits, ...cloudDatabase.recruits };
                         let mergedKicked = [...new Set([...(db.kickedNicks||[]), ...cloudDatabase.kickedNicks])];
                         let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])];
                         
-                        // Удаляем тех, кого успели кикнуть
                         mergedKicked.forEach(k => delete mergedRecruits[k]);
                         
                         latestDb = {
@@ -1057,7 +1061,7 @@
                     body: JSON.stringify({ data: latestDb })
                 });
                 
-                cloudDatabase = latestDb; // Обновляем локальную базу слитой версией
+                cloudDatabase = latestDb; 
             } catch (err) { console.error("Ошибка сохранения Supabase:", err); }
         }
 
@@ -1104,7 +1108,7 @@
             acceptBtn.textContent = "Синхронизация...";
             acceptBtn.disabled = true;
 
-            const registerTimestamp = Date.now();
+            const registerTimestamp = Math.max(Date.now(), FOUNDATION_DATE.getTime());
             let targetTgKey = currentParsedData.tg.trim().toLowerCase();
             if (!targetTgKey.startsWith('@')) targetTgKey = '@' + targetTgKey;
             
@@ -1210,7 +1214,7 @@
             let nick = localStorage.getItem('stage_cached_nick') || "Боец STAGE";
             let tgId = "Не указан";
             let gameId = "Не указан";
-            let joinDateStr = "Ранее 2026 г.";
+            let joinDateStr = "С 26.05.2026 г.";
             let rank = "Участник клана";
             let roleTitle = "Юнга"; 
             
@@ -1218,7 +1222,8 @@
                 nick = "Mitso";
                 rank = "Глава";
                 roleTitle = "Адмирал флота";
-                joinDateStr = "С момента основания";
+                joinDateStr = "С 26.05.2026 г.";
+                gameId = "22E9E4E8CABB7FCF";
             } else if (cleanTg && cloudDatabase.metadata[cleanTg]) {
                 let meta = cloudDatabase.metadata[cleanTg];
                 nick = meta.nick || nick;
@@ -1227,6 +1232,7 @@
                 rank = meta.rank || rank;
                 if (meta.joinDate) {
                     let d = new Date(meta.joinDate);
+                    if (d < FOUNDATION_DATE) d = FOUNDATION_DATE;
                     joinDateStr = d.toLocaleDateString('ru-RU');
                     
                     let diffMs = Date.now() - meta.joinDate;
@@ -1244,11 +1250,12 @@
 
                 rank = "Высший совет клана";
                 roleTitle = "Адмирал флота";
-                joinDateStr = "С момента основания";
+                joinDateStr = "С 26.05.2026 г.";
             } else if (localStorage.getItem('stage_team_logged') === 'true' && !sessionTg) {
                 nick = "Ветеран флота";
                 rank = "Почетный участник";
                 roleTitle = "Адмирал флота";
+                joinDateStr = "С 26.05.2026 г.";
             }
 
             document.getElementById('cabNick').textContent = nick;
@@ -1518,6 +1525,11 @@
                 isApproved = true;
                 localStorage.setItem('stage_leader_session', 'true');
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
+                
+                if (!cloudDatabase.metadata["@bymitso"]) {
+                    cloudDatabase.metadata["@bymitso"] = { nick: "Mitso", gameId: "22E9E4E8CABB7FCF", joinDate: FOUNDATION_DATE.getTime(), rank: "Глава", avatar: "" };
+                    saveToCloud();
+                }
             }
             else if (BASE_CLAN_MEMBERS[inputLogin] && BASE_CLAN_MEMBERS[inputLogin].toUpperCase() === inputPassword) {
                 isApproved = true;
@@ -1567,6 +1579,9 @@
             document.getElementById('tgChatLockBox').style.display = 'none'; 
             
             document.getElementById('mapsActualGrid').style.display = 'grid';
+            
+            if (window.innerWidth <= 768) { document.getElementById('toggleMapsBtn').style.display = 'block'; }
+            
             document.getElementById('boardActualContainer').style.display = 'flex';
             document.getElementById('telemostActualBtn').style.display = 'flex';
             document.getElementById('tgChatActualBtn').style.display = 'flex'; 
@@ -1600,12 +1615,26 @@
             document.getElementById('statConversionRate').textContent = conversion + "%";
             statsModalOverlay.classList.add('active');
         });
+        
         closeStatsModalBtn.addEventListener('click', () => statsModalOverlay.classList.remove('active'));
+
+        resetStatsBtn.addEventListener('click', () => {
+            if (confirm("Сбросить статистику? Количество просмотров останется неизменным.")) {
+                localStorage.removeItem('stage_uniques');
+                localStorage.removeItem('stage_requests_count');
+                uniqueVisits = 1; 
+                totalRequests = 0;
+                document.getElementById('statUniqueVisits').textContent = uniqueVisits;
+                document.getElementById('statTotalRequests').textContent = totalRequests;
+                document.getElementById('statConversionRate').textContent = "0%";
+                alert("Статистика успешно сброшена.");
+            }
+        });
 
         function generateTacticalMapsGrid() {
             const container = document.getElementById('mapsActualGrid');
             container.innerHTML = "";
-            for (let i = 1; i <= 17; i++) {
+            for (let i = 1; i <= 16; i++) {
                 const card = document.createElement('div');
                 card.className = 'map-card'; card.setAttribute('draggable', 'true');
                 card.innerHTML = `
@@ -1618,6 +1647,20 @@
                 container.appendChild(card);
             }
         }
+
+        const toggleMapsBtn = document.getElementById('toggleMapsBtn');
+        let isMapsExpanded = false;
+        toggleMapsBtn.addEventListener('click', () => {
+            isMapsExpanded = !isMapsExpanded;
+            const grid = document.getElementById('mapsActualGrid');
+            if (isMapsExpanded) {
+                grid.classList.remove('collapsed');
+                toggleMapsBtn.textContent = "Скрыть карты";
+            } else {
+                grid.classList.add('collapsed');
+                toggleMapsBtn.textContent = "Показать все карты";
+            }
+        });
 
         function setupDragAndDrop() {
             boardContainer.addEventListener('dragover', (e) => { e.preventDefault(); boardContainer.classList.add('drag-over'); });
@@ -1651,13 +1694,16 @@
             alert("Верификация пройдена успешно! Доступ открыт.");
         });
 
-        // Функция открытия информации (модальное окно обновлено)
         window.showPlayerInfo = function(nick) {
             if (nick === 'Mitso') {
                 document.getElementById('infoNick').textContent = nick;
-                document.getElementById('infoGameId').textContent = "Скрыт";
+                document.getElementById('infoGameId').textContent = "22E9E4E8CABB7FCF";
                 document.getElementById('infoRank').textContent = "Глава клана";
-                document.getElementById('infoAvatar').style.backgroundImage = "url('avatar1.png')";
+                let ava = 'none';
+                if (cloudDatabase.metadata['@bymitso'] && cloudDatabase.metadata['@bymitso'].avatar) {
+                    ava = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
+                }
+                document.getElementById('infoAvatar').style.backgroundImage = ava;
                 playerInfoModalOverlay.classList.add('active');
                 return;
             }
@@ -1675,7 +1721,7 @@
             if (playerMeta) {
                 document.getElementById('infoGameId').textContent = playerMeta.gameId || "Не указан";
                 document.getElementById('infoRank').textContent = playerMeta.rank || "Боец";
-                const ava = playerMeta.avatar || ''; // Оставляем пустым, если аватар еще не выбран
+                const ava = playerMeta.avatar || ''; 
                 document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
             } else {
                 document.getElementById('infoGameId').textContent = "Скрыт";
@@ -1695,6 +1741,11 @@
 
             const mySavedAvatar = localStorage.getItem('stage_user_avatar') || '';
             const myRegisteredTg = (localStorage.getItem('stage_user_registered_tg') || '').trim().toLowerCase();
+
+            const mitsoCardAva = document.querySelector('.player-card.leader[data-nick="Mitso"] .roster-avatar');
+            if (mitsoCardAva && cloudDatabase.metadata['@bymitso'] && cloudDatabase.metadata['@bymitso'].avatar) {
+                mitsoCardAva.style.backgroundImage = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
+            }
 
             for (let nick in cloudDatabase.recruits) {
                 const approveTime = cloudDatabase.recruits[nick];
