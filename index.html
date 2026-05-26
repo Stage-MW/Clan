@@ -150,15 +150,26 @@
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         
         h1 { 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: clamp(45px, 10vw, 110px); 
-            font-weight: 900; 
-            letter-spacing: clamp(6px, 1.5vw, 18px); 
-            text-transform: uppercase; 
-            color: #ffffff; 
-            animation: neonFlicker 6s infinite; 
-            text-align: center; 
-        }
+    font-family: 'Orbitron', sans-serif; 
+    font-size: clamp(45px, 10vw, 110px); 
+    font-weight: 900; 
+    letter-spacing: clamp(6px, 1.5vw, 18px); 
+    text-transform: uppercase; 
+    color: #ffffff; 
+    animation: smoothPulse 4s ease-in-out infinite; /* 4 секунды, плавно туда-обратно */
+    text-align: center; 
+}
+
+@keyframes smoothPulse {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+        color: rgba(255, 255, 255, 0.8);
+    }
+    50% {
+        text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe, 0 0 5px #00f2fe;
+        color: #ffffff;
+    }
+}
 
         .welcome-desc-container {
             max-width: 700px;
