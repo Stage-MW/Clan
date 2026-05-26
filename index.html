@@ -156,7 +156,7 @@
             letter-spacing: clamp(6px, 1.5vw, 18px); 
             text-transform: uppercase; 
             color: #ffffff; 
-            animation: bulbFlicker 4s ease-in-out infinite; 
+            animation: neonFlicker 6s infinite; 
             text-align: center; 
         }
 
@@ -189,15 +189,15 @@
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
-        @keyframes bulbFlicker {
-            0%, 100%, 4%, 8%, 12%, 22%, 26%, 30%, 42%, 46%, 50%, 62%, 66%, 70%, 82%, 86%, 90% {
+        @keyframes neonFlicker {
+            0%, 91%, 93%, 95%, 100% {
                 opacity: 1;
                 text-shadow: 0 0 35px #00f2fe, 0 0 15px rgba(0, 242, 254, 0.6), 0 0 5px #00f2fe;
                 color: #ffffff;
             }
-            2%, 6%, 10%, 24%, 28%, 44%, 48%, 64%, 68%, 84%, 88% {
-                opacity: 0.25;
-                text-shadow: 0 0 3px rgba(0, 242, 254, 0.2);
+            92%, 94% {
+                opacity: 0.6;
+                text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
                 color: #111b29;
             }
         }
@@ -255,10 +255,30 @@
         .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
-        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; }
+        .player-card { 
+            background: rgba(15, 23, 42, 0.85); 
+            border-left: 4px solid #00f2fe; 
+            padding: 12px 20px; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; 
+            position: relative; 
+            flex: 1 1 auto; 
+            min-width: 200px; 
+            max-width: 100%; 
+            cursor: pointer; 
+        }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
-        .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-card .name-wrapper span { 
+            white-space: normal; 
+            word-break: break-word; 
+            overflow: visible; 
+        }
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
@@ -272,7 +292,7 @@
 
         .secret-tg-box { display: none; width: 100%; max-width: 500px; margin-top: 25px; text-align: center; background: rgba(0, 242, 254, 0.1); border: 2px solid #00f2fe; border-radius: 6px; padding: 20px; box-shadow: 0 0 25px rgba(0, 242, 254, 0.2); position: relative; }
         .secret-tg-box p { font-family: 'Orbitron', sans-serif; font-size: 16px; color: #fff; margin-bottom: 15px; letter-spacing: 1px; }
-        .btn-reset-auth { display: block; background: none; border: none; color: rgba(255, 255, 255, 0.3); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 15px; font-family: inherit; width: 100%; text-align: center; transition: color 0.2s; }
+        .btn-reset-auth { display: block; background: none; border: none; color: rgba(255, 255, 255, 0.3); font-size: 11px; text-decoration: underline; cursor: margin-top: 15px; font-family: inherit; width: 100%; text-align: center; transition: color 0.2s; }
         .btn-reset-auth:hover { color: #ff0055; }
 
         .btn-join-neon {
@@ -424,15 +444,54 @@
             #navCabinetBtn i { font-size: 11px; }
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { padding: 60px 10px 80px; background-attachment: scroll; }
             
-            /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ */
-            .players-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
-            .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; height: auto !important; }
-            .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
+            /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+            .players-grid { 
+                display: flex; 
+                flex-direction: row; 
+                flex-wrap: nowrap; 
+                overflow-x: auto; 
+                gap: 12px; 
+                justify-content: flex-start; 
+                padding-bottom: 15px; 
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .player-card { 
+                flex: 0 0 75%; 
+                max-width: 75%; 
+                font-size: 14px; 
+                padding: 10px 12px; 
+                height: auto !important;
+                scroll-snap-align: center;
+            }
+            .players-grid .player-card:nth-child(n+7) { 
+                display: flex; 
+                opacity: 1; 
+                transform: none; 
+            }
             .toggle-roster-btn { display: block; margin-top: 15px; }
             
-            /* СЕТКА КАРТ НА ТЕЛЕФОНЕ */
-            .maps-grid { grid-template-columns: 1fr; gap: 15px; }
-            .maps-grid.collapsed .map-card:nth-child(n+2) { display: none !important; }
+            /* СЕТКА КАРТ НА ТЕЛЕФОНЕ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+            .maps-grid { 
+                display: flex; 
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto; 
+                gap: 15px; 
+                padding-bottom: 15px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .maps-grid .map-card {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+            }
+            .maps-grid.collapsed .map-card:nth-child(n+2) { 
+                display: flex !important; 
+            }
+            #toggleMapsBtn {
+                display: none !important;
+            }
             
             .board-container { height: 50vh; }
             .board-container.fullscreen-active { height: 100vh; }
@@ -710,18 +769,18 @@
                 
                 <div class="avatar-picker-title">Выберите аватар профиля:</div>
                 <div class="avatar-picker-grid" id="avatarPickerGrid">
-                    <div class="avatar-picker-item" style="background-image: url('avatar1.png');" onclick="selectProfileAvatar('avatar1.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar2.png');" onclick="selectProfileAvatar('avatar2.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar3.png');" onclick="selectProfileAvatar('avatar3.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar4.png');" onclick="selectProfileAvatar('avatar4.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar5.png');" onclick="selectProfileAvatar('avatar5.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar6.png');" onclick="selectProfileAvatar('avatar6.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar7.png');" onclick="selectProfileAvatar('avatar7.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar8.png');" onclick="selectProfileAvatar('avatar8.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar9.png');" onclick="selectProfileAvatar('avatar9.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar10.png');" onclick="selectProfileAvatar('avatar10.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar11.png');" onclick="selectProfileAvatar('avatar11.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('avatar12.png');" onclick="selectProfileAvatar('avatar12.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png', this)"></div>
                 </div>
                 
                 <div class="cabinet-info-list">
@@ -1596,7 +1655,7 @@
             
             document.getElementById('mapsActualGrid').style.display = 'grid';
             
-            if (window.innerWidth <= 768) { document.getElementById('toggleMapsBtn').style.display = 'block'; }
+            if (window.innerWidth <= 768) { document.getElementById('toggleMapsBtn').style.display = 'none'; }
             
             document.getElementById('boardActualContainer').style.display = 'flex';
             document.getElementById('telemostActualBtn').style.display = 'flex';
@@ -1764,6 +1823,12 @@
             }
 
             for (let nick in cloudDatabase.recruits) {
+                // Исключаем тестовые заявки из отображения
+                if (nick.toLowerCase() === 'test' || nick.toLowerCase() === 'тест') {
+                    delete cloudDatabase.recruits[nick];
+                    continue;
+                }
+
                 const approveTime = cloudDatabase.recruits[nick];
                 const card = document.createElement('div');
                 card.setAttribute('data-nick', nick);
@@ -1806,7 +1871,7 @@
 
                 playersGrid.appendChild(card);
                 
-                if (isRosterExpanded) {
+                if (isRosterExpanded || window.innerWidth <= 768) {
                     card.style.display = 'flex';
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
