@@ -86,7 +86,7 @@
         .btn-web-vote.v-yes { background: #22c55e; color: #000; }
         .btn-web-vote.v-no { background: #ef4444; color: #fff; }
 
-        /* ИСПРАВЛЕНИЕ: Даем больше минимальной ширины карточкам, чтобы никнеймы не сжимались до 1 буквы */
+        /* ИСПРАВЛЕНИЕ: Даем больше минимальной ширины карточкам, чтобы никнеймы не сжимались */
         .players-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
         .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 15px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; position: relative; flex: 1 1 250px; max-width: 350px; min-width: 240px; cursor: pointer; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
@@ -224,7 +224,6 @@
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { padding: 60px 10px 80px; background-attachment: scroll; }
             
             .players-grid { flex-direction: row; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
-            /* Адаптация сетки под телефон с учетом новых ограничений */
             .player-card { flex: 1 1 calc(50% - 4px); max-width: calc(50% - 4px); min-width: 140px; font-size: 14px; padding: 10px 12px; }
             .players-grid .player-card:nth-child(n+7) { display: none; opacity: 0; transform: translateY(-10px); }
             
@@ -663,7 +662,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // ИСПРАВЛЕНИЕ: Безопасное сохранение аватаров с "подтягиванием" свежей базы, чтобы не удалять чужие изменения
         async function saveToCloud() {
             if (!isCloudSynced) return;
             try {
@@ -675,9 +673,7 @@
                     const rows = await response.json();
                     if (rows.length > 0 && rows[0].data) {
                         const db = rows[0].data;
-                        // Склеиваем старые и новые данные перед отправкой
                         let mergedMeta = { ...db.metadata, ...cloudDatabase.metadata };
-                        // Убеждаемся, что забаненные не восстанут из мертвых
                         cloudDatabase.banned.forEach(b => delete mergedMeta[b]);
                         
                         cloudDatabase.metadata = mergedMeta;
@@ -775,12 +771,11 @@
             let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
             let cleanTg = sessionTg.trim().toLowerCase();
             
-            // ИСПРАВЛЕНИЕ: Глобальная синхронизация аватара для участников
             if (cleanTg) {
                 if (!cloudDatabase.metadata[cleanTg]) cloudDatabase.metadata[cleanTg] = {};
                 cloudDatabase.metadata[cleanTg].avatar = avatarUrl;
-                renderLocalRecruits(); // Обновление UI моментально
-                await saveToCloud();   // Сохранение и склеивание на сервере
+                renderLocalRecruits(); 
+                await saveToCloud();   
             }
         }
 
@@ -826,12 +821,11 @@
         document.getElementById('submitAdminLoginBtn').addEventListener('click', () => {
             let inputLogin = document.getElementById('adminEmailInput').value.trim().toLowerCase();
             let rawPassword = document.getElementById('adminPasswordInput').value.trim();
-            let inputPassword = rawPassword.toUpperCase(); // Для обычных бойцов требуется верхний регистр
+            let inputPassword = rawPassword.toUpperCase(); 
             if (!inputLogin.startsWith('@') && inputLogin !== "admin@stage.ru") inputLogin = '@' + inputLogin;
 
             let isApproved = false;
             
-            // ИСПРАВЛЕНИЕ: Теперь пароль проверяется "как есть" (с учетом нижнего регистра stage2026)
             if (inputLogin === SUPER_ADMIN.email && rawPassword === SUPER_ADMIN.password) {
                 isApproved = true; 
                 localStorage.setItem('stage_leader_session', 'true'); 
@@ -932,7 +926,6 @@
                 card.className = `player-card ${nick === 'Mitso' ? 'leader' : ''}`;
                 const tag = nick === "Mitso" ? `<span class="tag">Глава</span>` : ((Date.now() - (meta.joinDate || 0) < 86400000) ? `<span class="tag">Новобранец</span>` : '');
                 
-                // ИСПРАВЛЕНИЕ: Вывод аватарок из общей базы на главную страницу для всех бойцов
                 card.innerHTML = `<div class="name-wrapper"><div class="roster-avatar" style="${meta.avatar ? `background-image: url('${meta.avatar}');` : ''}"></div><span>${nick}</span></div>${tag}${nick !== 'Mitso' ? `<i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}')"></i>` : ''}`;
                 card.onclick = (e) => { if(!e.target.classList.contains('kick-btn')) showPlayerInfo(nick); };
                 
@@ -965,9 +958,45 @@
         });
         document.getElementById('lawAgree').addEventListener('change', function() { document.getElementById('submitBtn').disabled = !this.checked; });
         
+        // --- ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ БЛОК ОТПРАВКИ ЗАЯВОК В TELEGRAM ---
         document.getElementById('recruitForm').addEventListener('submit', function(e) {
-            e.preventDefault(); document.getElementById('recruitForm').style.display = 'none'; document.getElementById('successResult').style.display = 'block';
-            totalRequests++; localStorage.setItem('stage_requests_count', totalRequests.toString());
+            e.preventDefault(); 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = "Отправка в штаб...";
+            submitBtn.disabled = true;
+
+            const gameNick = document.getElementById('gameNick').value.trim();
+            const gameId = document.getElementById('gameId').value.trim();
+            const gameChatId = document.getElementById('gameChatId').value.trim();
+            let tgLink = document.getElementById('tgLink').value.trim();
+            if(!tgLink.startsWith('@')) tgLink = '@' + tgLink;
+
+            const textMessage = `⚓️ <b>Новая заявка STAGE!</b>\n\n👤 <b>Ник:</b> ${gameNick}\n🆔 <b>ID:</b> ${gameId}\n✈️ <b>TG:</b> ${tgLink}\n🆔 <b>CID:</b> ${gameChatId}`;
+            
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    chat_id: TG_CHAT_ID, 
+                    message_thread_id: TG_THREAD_ID, 
+                    text: textMessage, 
+                    parse_mode: 'html' 
+                })
+            }).then(response => {
+                if (response.ok) { 
+                    document.getElementById('recruitForm').style.display = 'none'; 
+                    document.getElementById('successResult').style.display = 'block'; 
+                    totalRequests++; 
+                    localStorage.setItem('stage_requests_count', totalRequests.toString());
+                } else { 
+                    alert("Ошибка: Сервер Telegram не принял заявку. Проверьте ID чата и токен."); 
+                }
+            }).catch(err => {
+                alert("Ошибка сети при отправке рапорта!");
+            }).finally(() => {
+                submitBtn.textContent = "Отправить заявку";
+                submitBtn.disabled = false;
+            });
         });
 
         window.sendMapToBoard = function(mapFileName, btn) {
@@ -977,7 +1006,6 @@
             setTimeout(() => { btn.innerHTML = orig; btn.style.color = ""; }, 2000);
         }
 
-        /* Функции Тренировок (сокращены для примера) */
         function initTrainingCountdown() { }
         window.registerWebsiteVote = async function(type) { }
         window.executeResetTrainingTimer = async function() { }
