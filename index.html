@@ -1050,16 +1050,21 @@
                     }
                 }
 
-                await fetch(`${SUPABASE_URL}state?id=eq.1`, {
-                    method: "PATCH",
+                // Используем POST и Prefer: resolution=merge-duplicates (Upsert)
+                const saveResponse = await fetch(`${SUPABASE_URL}state`, {
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "apikey": SUPABASE_KEY,
                         "Authorization": `Bearer ${SUPABASE_KEY}`,
-                        "Prefer": "return=minimal"
+                        "Prefer": "resolution=merge-duplicates"
                     },
-                    body: JSON.stringify({ data: latestDb })
+                    body: JSON.stringify({ id: 1, data: latestDb })
                 });
+
+                if (!saveResponse.ok) {
+                    console.error("Supabase отклонил сохранение данных. Текст ошибки:", await saveResponse.text());
+                }
                 
                 cloudDatabase = latestDb; 
             } catch (err) { console.error("Ошибка сохранения Supabase:", err); }
