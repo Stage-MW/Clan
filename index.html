@@ -746,19 +746,57 @@
             const registerTimestamp = Date.now();
             let targetTgKey = currentParsedData.tg.trim().toLowerCase();
             if (!targetTgKey.startsWith('@')) targetTgKey = '@' + targetTgKey;
-            
+
+            // Генерируем пароль для бойца
+            const generatedPassword = getClanPassword(targetTgKey);
+
             // Если игрок был кикнут ранее, убираем его из списка кикнутых
             if(cloudDatabase.kickedNicks && cloudDatabase.kickedNicks.includes(currentParsedData.nick)) {
                 cloudDatabase.kickedNicks = cloudDatabase.kickedNicks.filter(n => n !== currentParsedData.nick);
             }
 
             cloudDatabase.recruits[currentParsedData.nick] = registerTimestamp;
-            cloudDatabase.metadata[targetTgKey] = { nick: currentParsedData.nick, gameId: currentParsedData.gameId, chatId: currentParsedData.chatId, joinDate: registerTimestamp, rank: "Действующий боец", avatar: "" };
-            
+            cloudDatabase.metadata[targetTgKey] = { 
+                nick: currentParsedData.nick, 
+                gameId: currentParsedData.gameId, 
+                chatId: currentParsedData.chatId, 
+                joinDate: registerTimestamp, 
+                rank: "Действующий боец", 
+                avatar: "" 
+            };
+
             await saveToCloud();
-            alert(`Игрок ${currentParsedData.nick} зачислен в базу!`);
-            document.getElementById('rawTelegramInput').value = ""; document.getElementById('terminalStatusBox').style.display = 'none';
-            currentParsedData = null; acceptBtn.textContent = "Принять"; acceptBtn.disabled = false;
+
+            // --- ОТПРАВКА ЛОГИНА И ПАРОЛЯ В ЛС БОТОМ ---
+            const dmText = `⚓️ <b>Рапорт одобрен! Добро пожаловать во флот STAGE.</b>\n\nВаши данные для входа в защищенный терминал (сайт):\n👤 <b>Логин:</b> ${targetTgKey}\n🔑 <b>Пароль:</b> <code>${generatedPassword}</code>\n\nНикому не передавайте эти данные.`;
+
+            try {
+                const tgResponse = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: currentParsedData.chatId,
+                        text: dmText,
+                        parse_mode: 'html'
+                    })
+                });
+                
+                if (tgResponse.ok) {
+                    alert(`Игрок ${currentParsedData.nick} зачислен! Доступ отправлен ему в ЛС.`);
+                } else {
+                    alert(`Игрок зачислен в базу, но бот не смог отправить ЛС (возможно, боец не запустил бота).`);
+                }
+            } catch (err) {
+                console.error("Ошибка отправки Telegram:", err);
+                alert(`Игрок зачислен, но произошла ошибка сети при отправке сообщения в ЛС.`);
+            }
+
+            document.getElementById('rawTelegramInput').value = ""; 
+            document.getElementById('terminalStatusBox').style.display = 'none';
+            currentParsedData = null; 
+            acceptBtn.textContent = "Принять"; 
+            acceptBtn.disabled = false;
+            
             renderLocalRecruits();
         }
 
