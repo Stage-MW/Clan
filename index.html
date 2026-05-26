@@ -931,6 +931,23 @@
         document.getElementById('androidBotLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('userinfobot'); });
         document.getElementById('androidBotSuccessLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('StageClanRecruit_bot'); });
 
+        // ФУНКЦИЯ ИММУНИТЕТА АДМИНА ОТ СЛУЧАЙНЫХ БАНОВ
+        function checkBanAndLogout() {
+            const userTg = localStorage.getItem('stage_user_registered_tg');
+            const isLeader = localStorage.getItem('stage_leader_session') === 'true';
+            
+            // Защита админа: мы его никогда программно не выкидываем!
+            if (isLeader || (userTg && (userTg.toLowerCase() === '@bymitso' || userTg.toLowerCase() === 'admin@stage.ru'))) {
+                return false;
+            }
+            
+            if (userTg && Array.isArray(cloudDatabase.banned) && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
+                forceAbsoluteLogout();
+                return true;
+            }
+            return false;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (window.location.hash && window.location.hash !== "#welcome") {
                 if (!ignoreHashReset) {
@@ -962,11 +979,7 @@
             sections.forEach(s => observer.observe(s));
 
             syncWithCloud().then(() => {
-                const userTg = localStorage.getItem('stage_user_registered_tg');
-                if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
-                    forceAbsoluteLogout();
-                    return;
-                }
+                if (checkBanAndLogout()) return;
                 applyGlobalKickedFilters();
                 renderLocalRecruits();
                 initTrainingCountdown();
@@ -974,11 +987,7 @@
 
             setInterval(() => {
                 syncWithCloud().then(() => {
-                    const userTg = localStorage.getItem('stage_user_registered_tg');
-                    if (userTg && cloudDatabase.banned.includes(userTg.trim().toLowerCase())) {
-                        forceAbsoluteLogout();
-                        return;
-                    }
+                    if (checkBanAndLogout()) return;
                     applyGlobalKickedFilters();
                     renderLocalRecruits();
                     renderAttendanceListsOnSite();
@@ -1034,7 +1043,10 @@
                         
                         let mergedRecruits = { ...db.recruits, ...cloudDatabase.recruits };
                         let mergedKicked = [...new Set([...(db.kickedNicks||[]), ...cloudDatabase.kickedNicks])];
-                        let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])];
+                        
+                        // АВТО-ОЧИСТКА: Удаляем админа из базы забаненных, если он туда случайно попал!
+                        let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])]
+                            .filter(tg => tg !== '@bymitso' && tg !== 'admin@stage.ru');
                         
                         mergedKicked.forEach(k => delete mergedRecruits[k]);
                         
@@ -1050,7 +1062,6 @@
                     }
                 }
 
-                // Используем POST и Prefer: resolution=merge-duplicates (Upsert)
                 const saveResponse = await fetch(`${SUPABASE_URL}state`, {
                     method: "POST",
                     headers: {
@@ -1142,7 +1153,7 @@
                 body: JSON.stringify({ chat_id: currentParsedData.chatId, text: personalMessage, parse_mode: 'html' })
             });
 
-            alert(`Игрок ${currentParsedData.nick} зачислен! Бот отправил секре ключи авторизации в ЛС.`);
+            alert(`Игрок ${currentParsedData.nick} зачислен! Бот отправил секретные ключи авторизации в ЛС.`);
             
             rawTelegramInput.value = "";
             terminalStatusBox.style.display = 'none';
@@ -1793,10 +1804,8 @@
                     showPlayerInfo(nick);
                 };
 
-                // Мы убрали багованную строчку скрытия и доверили сетку CSS-стилям
                 playersGrid.appendChild(card);
                 
-                // Если список развернут, не даем карточкам пропадать при авто-обновлении (каждые 30 сек)
                 if (isRosterExpanded) {
                     card.style.display = 'flex';
                     card.style.opacity = '1';
