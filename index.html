@@ -1142,7 +1142,7 @@
                 body: JSON.stringify({ chat_id: currentParsedData.chatId, text: personalMessage, parse_mode: 'html' })
             });
 
-            alert(`Игрок ${currentParsedData.nick} зачислен! Бот отправил секретные ключи авторизации в ЛС.`);
+            alert(`Игрок ${currentParsedData.nick} зачислен! Бот отправил секре ключи авторизации в ЛС.`);
             
             rawTelegramInput.value = "";
             terminalStatusBox.style.display = 'none';
@@ -1793,8 +1793,15 @@
                     showPlayerInfo(nick);
                 };
 
-                if (window.innerWidth <= 768 && !isRosterExpanded) { card.style.display = 'none'; card.style.opacity = '0'; }
+                // Мы убрали багованную строчку скрытия и доверили сетку CSS-стилям
                 playersGrid.appendChild(card);
+                
+                // Если список развернут, не даем карточкам пропадать при авто-обновлении (каждые 30 сек)
+                if (isRosterExpanded) {
+                    card.style.display = 'flex';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
             }
             if (isLeaderMode) { document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block'); }
         }
