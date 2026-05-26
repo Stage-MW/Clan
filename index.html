@@ -481,7 +481,12 @@
             .btn-nav-login { padding: 4px 10px; font-size: 9px; }
             #navCabinetBtn { width: 26px; height: 26px; line-height: 22px; flex-shrink: 0; }
             #navCabinetBtn i { font-size: 11px; }
-            
+            .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { 
+                padding: 60px 10px 80px !important; 
+                background-attachment: scroll !important; /* Отключает баг с растягиванием на телефонах */
+                background-size: cover !important;
+                background-position: center !important;
+            }
             /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
             .players-grid { 
                 display: flex; 
