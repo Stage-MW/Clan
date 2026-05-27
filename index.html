@@ -218,9 +218,13 @@
         .rank-section { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.2); padding: 25px; border-radius: 6px; backdrop-filter: blur(5px); position: relative; width: 100%; }
         .rank-title { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 20px); color: #00f2fe; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; text-align: center; border-bottom: 1px dashed rgba(0, 242, 254, 0.2); padding-bottom: 10px; }
         
-        .training-admin-block { position: absolute; top: 20px; left: 25px; display: flex; gap: 10px; align-items: center; }
+        .training-admin-block { position: absolute; top: 20px; left: 25px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        
         .btn-training-trigger { display: none; background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; color: #fff; padding: 6px 14px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
         .btn-training-trigger:hover { background: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.7); }
+        
+        #btnSyncTrigger { border-color: #00f2fe; color: #00f2fe; background: rgba(0, 242, 254, 0.1); }
+        #btnSyncTrigger:hover { background: #00f2fe; color: #02050a; box-shadow: 0 0 20px rgba(0, 242, 254, 0.6); }
 
         .training-countdown-widget { display: none; width: 100%; max-width: 500px; background: rgba(2, 5, 10, 0.9); border: 2px solid #00f2fe; box-shadow: 0 0 25px rgba(0, 242, 254, 0.35); padding: 20px; border-radius: 8px; margin: 0 auto 25px; text-align: center; font-family: 'Orbitron', sans-serif; position: relative; }
         .close-timer-btn { display: none; position: absolute; top: 8px; right: 14px; color: rgba(255, 255, 255, 0.3); font-size: 20px; cursor: pointer; transition: color 0.2s; font-family: sans-serif; font-weight: bold; }
@@ -248,10 +252,10 @@
         .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
-        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; }
+        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; min-height: 50px; height: auto; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
-        .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-card .name-wrapper span { white-space: normal; word-break: break-word; line-height: 1.2; }
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
@@ -539,6 +543,7 @@
 
     <section id="roster" class="roster-screen">
         <div class="training-admin-block">
+            <button type="button" class="btn-training-trigger" id="btnSyncTrigger" style="display: none; background: rgba(0, 242, 254, 0.1); border-color: #00f2fe; color: #00f2fe;"><i class="fa-solid fa-rotate"></i> Синхронизация</button>
             <button type="button" class="btn-training-trigger" id="btnTrainingTrigger"><i class="fa-solid fa-calendar-plus"></i> Тренировка</button>
         </div>
 
@@ -770,18 +775,18 @@
                 
                 <div class="avatar-picker-title">Выберите аватар профиля:</div>
                 <div class="avatar-picker-grid" id="avatarPickerGrid">
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png?v=2', this)"></div>
                 </div>
                 
                 <div class="cabinet-info-list">
@@ -941,6 +946,7 @@
         const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         const btnTrainingTrigger = document.getElementById('btnTrainingTrigger');
+        const btnSyncTrigger = document.getElementById('btnSyncTrigger');
         const btnSubmitTraining = document.getElementById('btnSubmitTraining');
         const inputTrainingDate = document.getElementById('inputTrainingDate');
         const inputTrainingTime = document.getElementById('inputTrainingTime');
@@ -1058,7 +1064,8 @@
                 const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
                     headers: { 
                         "apikey": SUPABASE_KEY, 
-                        "Authorization": `Bearer ${SUPABASE_KEY}` 
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Cache-Control": "no-cache"
                     },
                     cache: 'no-store'
                 });
@@ -1086,7 +1093,11 @@
             }
             try {
                 const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` },
+                    headers: { 
+                        "apikey": SUPABASE_KEY, 
+                        "Authorization": `Bearer ${SUPABASE_KEY}`, 
+                        "Cache-Control": "no-cache" 
+                    },
                     cache: 'no-store'
                 });
                 
@@ -1103,13 +1114,22 @@
                         let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])]
                             .filter(tg => tg !== '@bymitso' && tg !== 'admin@stage.ru');
                         
-                        mergedKicked.forEach(k => delete mergedRecruits[k]);
+                        let mergedMetadata = { ...db.metadata, ...cloudDatabase.metadata };
+
+                        mergedKicked.forEach(k => {
+                            delete mergedRecruits[k];
+                            for (let tgKey in mergedMetadata) {
+                                if (mergedMetadata[tgKey].nick === k) {
+                                    delete mergedMetadata[tgKey];
+                                }
+                            }
+                        });
                         
                         latestDb = {
                             recruits: mergedRecruits,
                             banned: mergedBanned,
                             kickedNicks: mergedKicked,
-                            metadata: { ...db.metadata, ...cloudDatabase.metadata },
+                            metadata: mergedMetadata,
                             trainingTime: cloudDatabase.trainingTime !== undefined ? cloudDatabase.trainingTime : db.trainingTime,
                             trainingYes: cloudDatabase.trainingYes || db.trainingYes || [],
                             trainingNo: cloudDatabase.trainingNo || db.trainingNo || []
@@ -1367,6 +1387,24 @@
             trainingModalOverlay.classList.add('active');
         });
         closeTrainingModalBtn.addEventListener('click', () => trainingModalOverlay.classList.remove('active'));
+
+        btnSyncTrigger.addEventListener('click', async function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Сверяем...`;
+            this.disabled = true;
+            
+            await syncWithCloud();
+            applyGlobalKickedFilters();
+            renderLocalRecruits();
+            renderAttendanceListsOnSite();
+            initTrainingCountdown();
+            
+            this.innerHTML = `<i class="fa-solid fa-check"></i> Обновлено`;
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 2000);
+        });
 
         btnSubmitTraining.addEventListener('click', async () => {
             const dateVal = inputTrainingDate.value;
@@ -1667,6 +1705,7 @@
         function activateLeaderMode() {
             isLeaderMode = true; adminBadge.style.display = 'block'; navStatsBtn.style.display = 'block'; 
             btnTrainingTrigger.style.display = 'block'; 
+            document.getElementById('btnSyncTrigger').style.display = 'block';
             if(btnCloseTimer) btnCloseTimer.style.display = 'block'; 
             navLoginBtn.innerHTML = `<i class="fa-solid fa-user-gear" style="color:#ff0055;"></i> Админ`;
             navLoginBtn.style.background = "rgba(255, 0, 85, 0.15)"; navLoginBtn.style.borderColor = "#ff0055";
