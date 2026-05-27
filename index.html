@@ -150,27 +150,21 @@
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         
         h1 { 
-    font-family: 'Orbitron', sans-serif; 
-    font-size: clamp(45px, 10vw, 110px); 
-    font-weight: 900; 
-    letter-spacing: clamp(6px, 1.5vw, 18px); 
-    text-transform: uppercase; 
-    color: #ffffff; 
-    animation: colorShiftThree 9s linear infinite; /* 9 секунд для плавного прохода через 3 цвета */
-    text-align: center; 
-}
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(45px, 10vw, 110px); 
+            font-weight: 900; 
+            letter-spacing: clamp(6px, 1.5vw, 18px); 
+            text-transform: uppercase; 
+            color: #ffffff; 
+            animation: colorShiftThree 9s linear infinite; 
+            text-align: center; 
+        }
 
-@keyframes colorShiftThree {
-    0%, 100% {
-        text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; /* Бирюзовый */
-    }
-    33% {
-        text-shadow: 0 0 35px #a855f7, 0 0 15px #a855f7; /* Фиолетовый */
-    }
-    66% {
-        text-shadow: 0 0 35px #ff8c00, 0 0 15px #ff8c00; /* Оранжевый */
-    }
-}
+        @keyframes colorShiftThree {
+            0%, 100% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; }
+            33% { text-shadow: 0 0 35px #a855f7, 0 0 15px #a855f7; }
+            66% { text-shadow: 0 0 35px #ff8c00, 0 0 15px #ff8c00; }
+        }
 
         .welcome-desc-container {
             max-width: 700px;
@@ -199,19 +193,6 @@
             font-weight: 700;
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
-        }
-
-        @keyframes neonFlicker {
-            0%, 91%, 93%, 95%, 100% {
-                opacity: 1;
-                text-shadow: 0 0 35px #00f2fe, 0 0 15px rgba(0, 242, 254, 0.6), 0 0 5px #00f2fe;
-                color: #ffffff;
-            }
-            92%, 94% {
-                opacity: 0.6;
-                text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
-                color: #111b29;
-            }
         }
 
         .section-title { 
@@ -267,30 +248,10 @@
         .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
-        .player-card { 
-            background: rgba(15, 23, 42, 0.85); 
-            border-left: 4px solid #00f2fe; 
-            padding: 12px 20px; 
-            border-radius: 4px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; 
-            position: relative; 
-            flex: 1 1 auto; 
-            min-width: 200px; 
-            max-width: 100%; 
-            cursor: pointer; 
-        }
+        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
-        .player-card .name-wrapper span { 
-            white-space: normal; 
-            word-break: break-word; 
-            overflow: visible; 
-        }
+        .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
@@ -415,6 +376,7 @@
         /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay { position: fixed; inset: 0; background: rgba(1, 4, 10, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 15px; }
         .modal-overlay.active { display: flex; }
+        
         .modal-window { 
             background: #0b121f; 
             border: 2px solid #00f2fe; 
@@ -424,15 +386,39 @@
             padding: 25px; 
             border-radius: 8px; 
             position: relative; 
-            max-height: 90vh; /* Ограничиваем высоту до 90% от экрана */
-            overflow-y: auto; /* Включаем вертикальный скроллинг */
+            max-height: 90vh; 
+            overflow-y: auto; 
         }
-
-        /* Красивый скроллбар для модальных окон (под стиль сайта) */
         .modal-window::-webkit-scrollbar { width: 6px; }
         .modal-window::-webkit-scrollbar-track { background: rgba(2, 5, 10, 0.5); border-radius: 4px; }
         .modal-window::-webkit-scrollbar-thumb { background: #00f2fe; border-radius: 4px; }
         .modal-window::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+
+        .modal-title { font-family: 'Orbitron', sans-serif; font-size: 22px; color: #00f2fe; text-transform: uppercase; text-align: center; border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 10px; margin-bottom: 20px; }
+        
+        .close-btn { 
+            position: absolute !important; 
+            top: 12px !important; 
+            right: 12px !important; 
+            color: rgba(255,255,255,0.6) !important; 
+            font-size: 22px !important; 
+            cursor: pointer !important; 
+            transition: all 0.2s !important; 
+            z-index: 50 !important; 
+            background: #0b121f !important; 
+            width: 32px !important; 
+            height: 32px !important; 
+            display: flex !important; 
+            align-items: center !important; 
+            justify-content: center !important; 
+            border-radius: 50% !important;
+            border: 1px solid rgba(0, 242, 254, 0.3) !important;
+        }
+        .close-btn:hover { 
+            color: #ff0055 !important; 
+            border-color: #ff0055 !important;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4) !important;
+        }
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
@@ -481,60 +467,34 @@
             .btn-nav-login { padding: 4px 10px; font-size: 9px; }
             #navCabinetBtn { width: 26px; height: 26px; line-height: 22px; flex-shrink: 0; }
             #navCabinetBtn i { font-size: 11px; }
+
             .welcome-screen, .roster-screen, .maps-screen, .board-screen, .chat-screen, .creators-screen, .founders-screen { 
                 padding: 60px 10px 80px !important; 
-                background-attachment: scroll !important; /* Отключает баг с растягиванием на телефонах */
+                background-attachment: scroll !important; 
                 background-size: cover !important;
                 background-position: center !important;
             }
-            /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+            
+            /* СЕТКА УЧАСТНИКОВ НА ТЕЛЕФОНЕ - ВЕРТИКАЛЬНЫЙ СКРОЛЛ */
             .players-grid { 
                 display: flex; 
-                flex-direction: row; 
+                flex-direction: column; 
                 flex-wrap: nowrap; 
-                overflow-x: auto; 
-                gap: 12px; 
-                justify-content: flex-start; 
-                padding-bottom: 15px; 
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
+                gap: 10px; 
+                max-height: 280px; 
+                overflow-y: auto; 
+                overflow-x: hidden;
+                padding-right: 5px; 
+                justify-content: flex-start;
             }
-            .player-card { 
-                flex: 0 0 75%; 
-                max-width: 75%; 
-                font-size: 14px; 
-                padding: 10px 12px; 
-                height: auto !important;
-                scroll-snap-align: center;
-            }
-            .players-grid .player-card:nth-child(n+7) { 
-                display: flex; 
-                opacity: 1; 
-                transform: none; 
-            }
-            .toggle-roster-btn { display: block; margin-top: 15px; }
+            .players-grid::-webkit-scrollbar { width: 4px; }
+            .players-grid::-webkit-scrollbar-track { background: rgba(2, 5, 10, 0.5); border-radius: 4px; }
+            .players-grid::-webkit-scrollbar-thumb { background: #00f2fe; border-radius: 4px; }
+            .player-card { flex: 0 0 auto; width: 100%; max-width: 100%; font-size: 14px; padding: 12px 15px; height: auto !important; }
             
-            /* СЕТКА КАРТ НА ТЕЛЕФОНЕ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
-            .maps-grid { 
-                display: flex; 
-                flex-direction: row;
-                flex-wrap: nowrap;
-                overflow-x: auto; 
-                gap: 15px; 
-                padding-bottom: 15px;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-            }
-            .maps-grid .map-card {
-                flex: 0 0 85%;
-                scroll-snap-align: center;
-            }
-            .maps-grid.collapsed .map-card:nth-child(n+2) { 
-                display: flex !important; 
-            }
-            #toggleMapsBtn {
-                display: none !important;
-            }
+            /* СЕТКА КАРТ НА ТЕЛЕФОНЕ */
+            .maps-grid { grid-template-columns: 1fr; gap: 15px; }
+            .maps-grid.collapsed .map-card:nth-child(n+2) { display: none !important; }
             
             .board-container { height: 50vh; }
             .board-container.fullscreen-active { height: 100vh; }
@@ -631,7 +591,6 @@
                         <span class="tag">Глава</span>
                     </div>
                 </div>
-                <button type="button" class="toggle-roster-btn" id="toggleRosterBtn">Показать всех участников</button>
             </div>
         </div>
 
@@ -947,7 +906,6 @@
         const playersGrid = document.getElementById('playersGrid');
         const secretTgBox = document.getElementById('secretTgBox');
         const recruitBoxBtn = document.getElementById('recruitBoxBtn');
-        const toggleRosterBtn = document.getElementById('toggleRosterBtn');
         const adminBadge = document.getElementById('adminBadge');
 
         const navLawBtn = document.getElementById('navLawBtn');
@@ -1000,7 +958,6 @@
         
         const resetStatsBtn = document.getElementById('resetStatsBtn');
 
-        let isRosterExpanded = false;
         let isLeaderMode = false;
         let currentParsedData = null;
         let countdownIntervalId = null;
@@ -1033,12 +990,10 @@
         document.getElementById('androidBotLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('userinfobot'); });
         document.getElementById('androidBotSuccessLink').addEventListener('click', (e) => { e.preventDefault(); openTelegramBot('StageClanRecruit_bot'); });
 
-        // ФУНКЦИЯ ИММУНИТЕТА АДМИНА ОТ СЛУЧАЙНЫХ БАНОВ
         function checkBanAndLogout() {
             const userTg = localStorage.getItem('stage_user_registered_tg');
             const isLeader = localStorage.getItem('stage_leader_session') === 'true';
             
-            // Защита админа: мы его никогда программно не выкидываем!
             if (isLeader || (userTg && (userTg.toLowerCase() === '@bymitso' || userTg.toLowerCase() === 'admin@stage.ru'))) {
                 return false;
             }
@@ -1146,7 +1101,6 @@
                         let mergedRecruits = { ...db.recruits, ...cloudDatabase.recruits };
                         let mergedKicked = [...new Set([...(db.kickedNicks||[]), ...cloudDatabase.kickedNicks])];
                         
-                        // АВТО-ОЧИСТКА: Удаляем админа из базы забаненных, если он туда случайно попал!
                         let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])]
                             .filter(tg => tg !== '@bymitso' && tg !== 'admin@stage.ru');
                         
@@ -1698,7 +1652,7 @@
             
             document.getElementById('mapsActualGrid').style.display = 'grid';
             
-            if (window.innerWidth <= 768) { document.getElementById('toggleMapsBtn').style.display = 'none'; }
+            if (window.innerWidth <= 768) { document.getElementById('toggleMapsBtn').style.display = 'block'; }
             
             document.getElementById('boardActualContainer').style.display = 'flex';
             document.getElementById('telemostActualBtn').style.display = 'flex';
@@ -1866,7 +1820,6 @@
             }
 
             for (let nick in cloudDatabase.recruits) {
-                // Исключаем тестовые заявки из отображения
                 if (nick.toLowerCase() === 'test' || nick.toLowerCase() === 'тест') {
                     delete cloudDatabase.recruits[nick];
                     continue;
@@ -1914,11 +1867,9 @@
 
                 playersGrid.appendChild(card);
                 
-                if (isRosterExpanded || window.innerWidth <= 768) {
-                    card.style.display = 'flex';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }
+                card.style.display = 'flex';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
             }
             if (isLeaderMode) { document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block'); }
         }
@@ -1952,16 +1903,6 @@
                 alert(`Игрок ${nick} успешно вырезан из глобальной базы данных сайта на всех устройствах.`);
             }
         }
-
-        toggleRosterBtn.addEventListener('click', () => {
-            const hiddenCards = document.querySelectorAll('.players-grid .player-card:nth-child(n+7)');
-            isRosterExpanded = !isRosterExpanded;
-            hiddenCards.forEach(card => {
-                if (isRosterExpanded) { card.style.display = 'flex'; setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 10); } 
-                else { card.style.opacity = '0'; card.style.transform = 'translateY(-10px)'; setTimeout(() => { card.style.display = 'none'; }, 300); }
-            });
-            toggleRosterBtn.textContent = isRosterExpanded ? "Скрыть список" : "Показать всех участников";
-        });
 
         lawAgree.addEventListener('change', function() { submitBtn.disabled = !this.checked; });
         openModalBtn.addEventListener('click', () => { 
