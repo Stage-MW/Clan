@@ -257,6 +257,40 @@
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
 
+        /* --- СТАТУСЫ ИГРОКОВ (ЛЕГЕНДА И ГЕРОЙ) --- */
+        .player-card.status-legend {
+            border-left-color: #a855f7 !important;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        .player-card.status-legend:hover { box-shadow: 0 5px 20px rgba(168, 85, 247, 0.7); }
+        .player-card.status-legend .name-wrapper span { color: #a855f7 !important; text-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
+
+        .player-card.status-hero {
+            border-left-color: #ff8c00 !important;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+        }
+        .player-card.status-hero:hover { box-shadow: 0 5px 20px rgba(255, 140, 0, 0.7); }
+        .player-card.status-hero .name-wrapper span { color: #ff8c00 !important; text-shadow: 0 0 8px rgba(255, 140, 0, 0.6); }
+
+        .status-btn-group {
+            display: none;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(0, 242, 254, 0.3);
+        }
+        .btn-status {
+            flex: 1; padding: 8px; border: none; border-radius: 4px; color: #fff;
+            font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 900; text-transform: uppercase;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-status.legend { background: #a855f7; }
+        .btn-status.legend:hover { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6); transform: scale(1.05); }
+        .btn-status.hero { background: #ff8c00; color: #000; }
+        .btn-status.hero:hover { box-shadow: 0 0 15px rgba(255, 140, 0, 0.6); transform: scale(1.05); }
+        .btn-status.reset { background: #1e293b; color: #94a3b8; }
+        .btn-status.reset:hover { background: #ef4444; color: #fff; }
+
         .kick-btn { display: none; color: #ff0055; cursor: pointer; font-size: 16px; margin-left: 10px; transition: transform 0.2s; flex-shrink: 0; z-index: 2; }
         .kick-btn:hover { transform: scale(1.3); text-shadow: 0 0 10px #ff0055; }
         #adminBadge { display: none; text-align: center; font-family: 'Orbitron', sans-serif; color: #ff0055; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; text-shadow: 0 0 10px #ff0055; }
@@ -739,6 +773,12 @@
                 
                 <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Должность:</div>
                 <div id="infoRank" style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #fff;">-</div>
+
+                <div class="status-btn-group" id="adminStatusButtons">
+                    <button type="button" class="btn-status legend" onclick="assignPlayerStatus('legend')">Легенда</button>
+                    <button type="button" class="btn-status hero" onclick="assignPlayerStatus('hero')">Герой</button>
+                    <button type="button" class="btn-status reset" onclick="assignPlayerStatus('none')">Снять</button>
+                </div>
             </div>
         </div>
     </div>
@@ -961,6 +1001,7 @@
         let isLeaderMode = false;
         let currentParsedData = null;
         let countdownIntervalId = null;
+        let currentSelectedPlayerNick = "";
         
         let cloudDatabase = { recruits: {}, banned: [], kickedNicks: [], metadata: {}, trainingTime: null, trainingYes: [], trainingNo: [] };
         let ignoreHashReset = false; 
@@ -1039,6 +1080,7 @@
                 if (checkBanAndLogout()) return;
                 applyGlobalKickedFilters();
                 renderLocalRecruits();
+                applyLeaderStatusColors();
                 initTrainingCountdown();
             });
 
@@ -1047,6 +1089,7 @@
                     if (checkBanAndLogout()) return;
                     applyGlobalKickedFilters();
                     renderLocalRecruits();
+                    applyLeaderStatusColors();
                     renderAttendanceListsOnSite();
                 });
             }, 30000);
@@ -1639,6 +1682,7 @@
             navLoginBtn.innerHTML = `<i class="fa-solid fa-user-gear" style="color:#ff0055;"></i> Админ`;
             navLoginBtn.style.background = "rgba(255, 0, 85, 0.15)"; navLoginBtn.style.borderColor = "#ff0055";
             document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block');
+            applyLeaderStatusColors();
         }
 
         navStatsBtn.addEventListener('click', () => {
@@ -1734,6 +1778,8 @@
         });
 
         window.showPlayerInfo = function(nick) {
+            currentSelectedPlayerNick = nick;
+            
             if (nick === 'Mitso') {
                 document.getElementById('infoNick').textContent = nick;
                 document.getElementById('infoGameId').textContent = "22E9E4E8CABB7FCF";
@@ -1743,32 +1789,86 @@
                     ava = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
                 }
                 document.getElementById('infoAvatar').style.backgroundImage = ava;
-                playerInfoModalOverlay.classList.add('active');
-                return;
-            }
-            
-            let playerMeta = null;
-            for (let tg in cloudDatabase.metadata) {
-                if (cloudDatabase.metadata[tg].nick === nick) {
-                    playerMeta = cloudDatabase.metadata[tg];
-                    break;
+            } else {
+                let playerMeta = null;
+                for (let tg in cloudDatabase.metadata) {
+                    if (cloudDatabase.metadata[tg].nick === nick) {
+                        playerMeta = cloudDatabase.metadata[tg];
+                        break;
+                    }
+                }
+                
+                document.getElementById('infoNick').textContent = nick;
+                
+                if (playerMeta) {
+                    document.getElementById('infoGameId').textContent = playerMeta.gameId || "Не указан";
+                    document.getElementById('infoRank').textContent = playerMeta.rank || "Боец";
+                    const ava = playerMeta.avatar || ''; 
+                    document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
+                } else {
+                    document.getElementById('infoGameId').textContent = "Скрыт";
+                    document.getElementById('infoRank').textContent = "Участник";
+                    document.getElementById('infoAvatar').style.backgroundImage = "none";
                 }
             }
-            
-            document.getElementById('infoNick').textContent = nick;
-            
-            if (playerMeta) {
-                document.getElementById('infoGameId').textContent = playerMeta.gameId || "Не указан";
-                document.getElementById('infoRank').textContent = playerMeta.rank || "Боец";
-                const ava = playerMeta.avatar || ''; 
-                document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
-            } else {
-                document.getElementById('infoGameId').textContent = "Скрыт";
-                document.getElementById('infoRank').textContent = "Участник";
-                document.getElementById('infoAvatar').style.backgroundImage = "none";
+
+            const statusBtns = document.getElementById('adminStatusButtons');
+            if (statusBtns) {
+                statusBtns.style.display = isLeaderMode ? 'flex' : 'none';
             }
             
             playerInfoModalOverlay.classList.add('active');
+        }
+
+        window.assignPlayerStatus = async function(statusType) {
+            if (!isLeaderMode || !currentSelectedPlayerNick) return;
+
+            let tgKeyToUpdate = null;
+            if (currentSelectedPlayerNick === 'Mitso') {
+                tgKeyToUpdate = '@bymitso';
+            } else {
+                for (let tg in cloudDatabase.metadata) {
+                    if (cloudDatabase.metadata[tg].nick === currentSelectedPlayerNick) {
+                        tgKeyToUpdate = tg;
+                        break;
+                    }
+                }
+            }
+
+            if (!tgKeyToUpdate) {
+                alert("Ошибка: Боец еще не полностью зачислен в базу (нет metadata).");
+                return;
+            }
+
+            const btnGroup = document.getElementById('adminStatusButtons');
+            const originalHtml = btnGroup.innerHTML;
+            btnGroup.innerHTML = "<div style='color:#00f2fe; font-size:12px; width:100%; text-align:center;'>Запись в Штаб...</div>";
+
+            if (!cloudDatabase.metadata[tgKeyToUpdate]) cloudDatabase.metadata[tgKeyToUpdate] = {};
+            
+            if (statusType === 'none') {
+                delete cloudDatabase.metadata[tgKeyToUpdate].customStatus;
+            } else {
+                cloudDatabase.metadata[tgKeyToUpdate].customStatus = statusType;
+            }
+
+            await saveToCloud();
+
+            btnGroup.innerHTML = originalHtml;
+            playerInfoModalOverlay.classList.remove('active');
+
+            renderLocalRecruits();
+            applyLeaderStatusColors();
+        }
+
+        function applyLeaderStatusColors() {
+            const mitsoCard = document.querySelector('.player-card.leader[data-nick="Mitso"]');
+            if (mitsoCard && cloudDatabase.metadata['@bymitso']) {
+                mitsoCard.classList.remove('status-legend', 'status-hero');
+                const stat = cloudDatabase.metadata['@bymitso'].customStatus;
+                if (stat === 'legend') mitsoCard.classList.add('status-legend');
+                if (stat === 'hero') mitsoCard.classList.add('status-hero');
+            }
         }
 
         closePlayerInfoBtn.addEventListener('click', () => { playerInfoModalOverlay.classList.remove('active'); });
@@ -1795,14 +1895,18 @@
                 const approveTime = cloudDatabase.recruits[nick];
                 const card = document.createElement('div');
                 card.setAttribute('data-nick', nick);
-                card.className = 'player-card new-recruit-dynamic';
 
                 let avatarStyle = "";
                 let isMe = false;
+                let customStatusClass = "";
                 
                 for (let tgKey in cloudDatabase.metadata) {
-                    if (cloudDatabase.metadata[tgKey].nick === nick && tgKey === myRegisteredTg) {
-                        isMe = true;
+                    if (cloudDatabase.metadata[tgKey].nick === nick) {
+                        if (tgKey === myRegisteredTg) {
+                            isMe = true;
+                        }
+                        if (cloudDatabase.metadata[tgKey].customStatus === 'legend') customStatusClass = "status-legend";
+                        if (cloudDatabase.metadata[tgKey].customStatus === 'hero') customStatusClass = "status-hero";
                     }
                 }
 
@@ -1818,6 +1922,7 @@
                 
                 const tagHtml = (now - approveTime < oneDayInMs) ? `<span class="tag">Новобранец</span>` : '';
                 
+                card.className = `player-card new-recruit-dynamic ${customStatusClass}`;
                 card.innerHTML = `
                     <div class="name-wrapper">
                         <div class="roster-avatar" ${avatarStyle}></div>
@@ -1864,9 +1969,7 @@
                 }
 
                 await saveToCloud();
-                
                 element.parentElement.remove(); 
-                
                 alert(`Данные игрока ${nick} полностью удалены с сервера и сайта.`);
             }
         }
