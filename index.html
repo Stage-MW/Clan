@@ -248,10 +248,10 @@
         .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
-        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; min-height: 50px; height: auto; }
+        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
         .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
-        .player-card .name-wrapper span { white-space: normal; word-break: break-word; line-height: 1.2; }
+        .player-card .name-wrapper span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
@@ -770,18 +770,18 @@
                 
                 <div class="avatar-picker-title">Выберите аватар профиля:</div>
                 <div class="avatar-picker-grid" id="avatarPickerGrid">
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png?v=2', this)"></div>
-                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png?v=2');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png?v=2', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar1.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar2.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar3.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar4.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar5.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar6.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar7.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar8.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar9.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar10.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar11.png', this)"></div>
+                    <div class="avatar-picker-item" style="background-image: url('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png');" onclick="selectProfileAvatar('https://noxmicgoosxoqderhgdp.supabase.co/storage/v1/object/public/avatars/avatar12.png', this)"></div>
                 </div>
                 
                 <div class="cabinet-info-list">
@@ -1055,12 +1055,12 @@
 
         async function syncWithCloud() {
             try {
-                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data&_=${Date.now()}`, {
+                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
                     headers: { 
                         "apikey": SUPABASE_KEY, 
-                        "Authorization": `Bearer ${SUPABASE_KEY}`,
-                        "Cache-Control": "no-cache"
-                    }
+                        "Authorization": `Bearer ${SUPABASE_KEY}` 
+                    },
+                    cache: 'no-store'
                 });
                 if (response.ok) {
                     const rows = await response.json();
@@ -1085,8 +1085,9 @@
                 if (!isCloudSynced) return; 
             }
             try {
-                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data&_=${Date.now()}`, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Cache-Control": "no-cache" }
+                const response = await fetch(`${SUPABASE_URL}state?id=eq.1&select=data`, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` },
+                    cache: 'no-store'
                 });
                 
                 let latestDb = cloudDatabase;
@@ -1102,22 +1103,13 @@
                         let mergedBanned = [...new Set([...(db.banned||[]), ...cloudDatabase.banned])]
                             .filter(tg => tg !== '@bymitso' && tg !== 'admin@stage.ru');
                         
-                        let mergedMetadata = { ...db.metadata, ...cloudDatabase.metadata };
-
-                        mergedKicked.forEach(k => {
-                            delete mergedRecruits[k];
-                            for (let tgKey in mergedMetadata) {
-                                if (mergedMetadata[tgKey].nick === k) {
-                                    delete mergedMetadata[tgKey];
-                                }
-                            }
-                        });
+                        mergedKicked.forEach(k => delete mergedRecruits[k]);
                         
                         latestDb = {
                             recruits: mergedRecruits,
                             banned: mergedBanned,
                             kickedNicks: mergedKicked,
-                            metadata: mergedMetadata,
+                            metadata: { ...db.metadata, ...cloudDatabase.metadata },
                             trainingTime: cloudDatabase.trainingTime !== undefined ? cloudDatabase.trainingTime : db.trainingTime,
                             trainingYes: cloudDatabase.trainingYes || db.trainingYes || [],
                             trainingNo: cloudDatabase.trainingNo || db.trainingNo || []
