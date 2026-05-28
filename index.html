@@ -149,6 +149,7 @@
         .welcome-screen { justify-content: center; background-image: linear-gradient(rgba(2, 5, 10, 0.4), rgba(2, 5, 10, 0.8)), url('bg.png'); }
         .welcome-text { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 4vw, 24px); color: #00f2fe; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         
+        /* Эффект медленно мерцающей лампочки для названия клана */
         h1 { 
             font-family: 'Orbitron', sans-serif; 
             font-size: clamp(45px, 10vw, 110px); 
@@ -156,14 +157,18 @@
             letter-spacing: clamp(6px, 1.5vw, 18px); 
             text-transform: uppercase; 
             color: #ffffff; 
-            animation: colorShiftThree 9s linear infinite; 
+            animation: slowFlicker 6s infinite alternate; 
             text-align: center; 
         }
 
-        @keyframes colorShiftThree {
-            0%, 100% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; }
-            33% { text-shadow: 0 0 35px #a855f7, 0 0 15px #a855f7; }
-            66% { text-shadow: 0 0 35px #ff8c00, 0 0 15px #ff8c00; }
+        @keyframes slowFlicker {
+            0%, 100% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
+            48% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
+            50% { text-shadow: none; opacity: 0.6; }
+            52% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
+            78% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
+            80% { text-shadow: 0 0 10px rgba(0,242,254,0.3); opacity: 0.8; }
+            82% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
         }
 
         .welcome-desc-container {
@@ -249,10 +254,32 @@
         .btn-web-vote:active { transform: scale(0.97); }
 
         .players-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
-        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; min-height: 50px; height: auto; }
+        .player-card { background: rgba(15, 23, 42, 0.85); border-left: 4px solid #00f2fe; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s; position: relative; flex: 1 1 calc(20% - 12px); min-width: 200px; max-width: 280px; cursor: pointer; min-height: 50px; height: auto; overflow: hidden; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2); }
-        .player-card .name-wrapper { display: flex; align-items: center; gap: 10px; min-width: 0; flex-grow: 1; }
-        .player-card .name-wrapper span { white-space: normal; word-break: break-word; line-height: 1.2; }
+        
+        /* Изменения для длинных никнеймов и бегущей строки */
+        .player-card .name-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            min-width: 0; 
+            flex-grow: 1; 
+            overflow: hidden; 
+            white-space: nowrap; 
+            width: calc(100% - 30px);
+        }
+        .player-card .name-wrapper span { 
+            display: inline-block; 
+            white-space: nowrap; 
+        }
+        .marquee-anim {
+            animation: marqueeText 5s linear infinite alternate;
+        }
+        @keyframes marqueeText {
+            0%, 10% { transform: translateX(0); }
+            90%, 100% { transform: translateX(calc(-100% + 100px)); }
+        }
+
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
@@ -459,6 +486,24 @@
         .form-group label { display: block; font-size: 13px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
         .form-group input, .form-group textarea { width: 100%; background: #02050a; border: 1px solid rgba(0, 242, 254, 0.3); padding: 10px; color: #fff; border-radius: 4px; font-family: 'Oswald', sans-serif; }
         
+        /* Стили для редактируемого поля ID */
+        .editable-id-input {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            background: transparent;
+            border: none;
+            text-align: center;
+            width: 100%;
+            text-shadow: 0 0 10px rgba(0,242,254,0.5);
+            outline: none;
+            padding: 5px;
+        }
+        .editable-id-input:focus {
+            border-bottom: 1px dashed #00f2fe;
+        }
+
         .law-box { background: rgba(2, 5, 10, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; gap: 10px; align-items: flex-start; }
         .law-box input { width: 18px; height: 18px; accent-color: #00f2fe; flex-shrink: 0; cursor: pointer; }
         .law-text { font-size: 11px; color: #94a3b8; line-height: 1.4; }
@@ -568,7 +613,7 @@
         
         <div class="welcome-desc-container">
             <p class="welcome-desc-p">Добро пожаловать в клан STAGE</p>
-            <p class="welcome-desc-p">STAGE — играем среди лучших.Стань частью команды.</p>
+            <p class="welcome-desc-p">STAGE — играем среди лучших. Стань частью команды.</p>
         </div>
     </section>
 
@@ -769,10 +814,13 @@
                 <div id="infoNick" style="font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.5);">-</div>
                 
                 <div style="color: #00f2fe; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Игровой ID:</div>
-                <div id="infoGameId" style="font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.5);">-</div>
+                <div style="position: relative; width: 100%; margin-bottom: 15px;">
+                    <input type="text" id="infoGameIdInput" class="editable-id-input" value="-" readonly>
+                    <i class="fa-solid fa-pen" id="editIdIcon" style="display: none; position: absolute; right: 10px; top: 5px; color: #a855f7; font-size: 12px; cursor: pointer;"></i>
+                </div>
                 
-                <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Должность:</div>
-                <div id="infoRank" style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #fff;">-</div>
+                <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Морское Звание:</div>
+                <div id="infoRank" style="font-family: 'Orbitron', sans-serif; font-size: 15px; color: #fff; margin-bottom: 15px;">-</div>
 
                 <div class="status-btn-group" id="adminStatusButtons">
                     <button type="button" class="btn-status legend" onclick="assignPlayerStatus('legend')">Легенда</button>
@@ -1779,37 +1827,67 @@
 
         window.showPlayerInfo = function(nick) {
             currentSelectedPlayerNick = nick;
+            const idInput = document.getElementById('infoGameIdInput');
+            const editIcon = document.getElementById('editIdIcon');
+            
+            let playerMeta = null;
+            for (let tg in cloudDatabase.metadata) {
+                if (cloudDatabase.metadata[tg].nick === nick) {
+                    playerMeta = cloudDatabase.metadata[tg];
+                    break;
+                }
+            }
+            
+            document.getElementById('infoNick').textContent = nick;
+            
+            // Вычисляем звание на основе времени в клане
+            let joinDateMs = (playerMeta && playerMeta.joinDate) ? playerMeta.joinDate : FOUNDATION_DATE.getTime();
+            let diffMs = Date.now() - joinDateMs;
+            let diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.4375));
+            if (diffMonths < 0) diffMonths = 0;
+            if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
             
             if (nick === 'Mitso') {
-                document.getElementById('infoNick').textContent = nick;
-                document.getElementById('infoGameId').textContent = "22E9E4E8CABB7FCF";
-                document.getElementById('infoRank').textContent = "Глава клана";
+                idInput.value = "22E9E4E8CABB7FCF";
+                document.getElementById('infoRank').textContent = "Адмирал флота (Глава)";
                 let ava = 'none';
                 if (cloudDatabase.metadata['@bymitso'] && cloudDatabase.metadata['@bymitso'].avatar) {
                     ava = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
                 }
                 document.getElementById('infoAvatar').style.backgroundImage = ava;
             } else {
-                let playerMeta = null;
-                for (let tg in cloudDatabase.metadata) {
-                    if (cloudDatabase.metadata[tg].nick === nick) {
-                        playerMeta = cloudDatabase.metadata[tg];
-                        break;
-                    }
-                }
-                
-                document.getElementById('infoNick').textContent = nick;
-                
                 if (playerMeta) {
-                    document.getElementById('infoGameId').textContent = playerMeta.gameId || "Не указан";
-                    document.getElementById('infoRank').textContent = playerMeta.rank || "Боец";
+                    idInput.value = playerMeta.gameId || "Не указан";
+                    document.getElementById('infoRank').textContent = NAVAL_RANKS[diffMonths];
                     const ava = playerMeta.avatar || ''; 
                     document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
                 } else {
-                    document.getElementById('infoGameId').textContent = "Скрыт";
-                    document.getElementById('infoRank').textContent = "Участник";
+                    idInput.value = "Скрыт";
+                    document.getElementById('infoRank').textContent = "Юнга";
                     document.getElementById('infoAvatar').style.backgroundImage = "none";
                 }
+            }
+
+            // Включение режима редактирования для администратора
+            if (isLeaderMode && playerMeta) {
+                idInput.removeAttribute('readonly');
+                editIcon.style.display = 'block';
+                idInput.style.borderBottom = "1px dashed rgba(0, 242, 254, 0.3)";
+                
+                // Синхронизация ID с облаком при изменении
+                idInput.onchange = async function() {
+                    const newId = this.value.trim();
+                    if(newId) {
+                        playerMeta.gameId = newId;
+                        await saveToCloud();
+                        alert(`Игровой ID бойца ${nick} успешно обновлен в облаке!`);
+                    }
+                };
+            } else {
+                idInput.setAttribute('readonly', true);
+                editIcon.style.display = 'none';
+                idInput.style.borderBottom = "none";
+                idInput.onchange = null;
             }
 
             const statusBtns = document.getElementById('adminStatusButtons');
@@ -1878,6 +1956,13 @@
             const oneDayInMs = 24 * 60 * 60 * 1000;
             const now = Date.now();
 
+            // Защита от дублирования ников
+            const renderedNicks = new Set();
+            document.querySelectorAll('.player-card').forEach(c => {
+                const n = c.getAttribute('data-nick');
+                if(n) renderedNicks.add(n);
+            });
+
             const mySavedAvatar = localStorage.getItem('stage_user_avatar') || '';
             const myRegisteredTg = (localStorage.getItem('stage_user_registered_tg') || '').trim().toLowerCase();
 
@@ -1892,6 +1977,9 @@
                     continue;
                 }
 
+                if (renderedNicks.has(nick)) continue;
+                renderedNicks.add(nick);
+
                 const approveTime = cloudDatabase.recruits[nick];
                 const card = document.createElement('div');
                 card.setAttribute('data-nick', nick);
@@ -1902,9 +1990,7 @@
                 
                 for (let tgKey in cloudDatabase.metadata) {
                     if (cloudDatabase.metadata[tgKey].nick === nick) {
-                        if (tgKey === myRegisteredTg) {
-                            isMe = true;
-                        }
+                        if (tgKey === myRegisteredTg) isMe = true;
                         if (cloudDatabase.metadata[tgKey].customStatus === 'legend') customStatusClass = "status-legend";
                         if (cloudDatabase.metadata[tgKey].customStatus === 'hero') customStatusClass = "status-hero";
                     }
@@ -1938,12 +2024,23 @@
                 };
 
                 playersGrid.appendChild(card);
-                
                 card.style.display = 'flex';
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
+
+                // Активация бегущей строки для слишком длинных ников
+                setTimeout(() => {
+                    const nameSpan = card.querySelector('.name-wrapper span');
+                    const wrapper = card.querySelector('.name-wrapper');
+                    if (nameSpan && wrapper && nameSpan.scrollWidth > wrapper.clientWidth + 2) {
+                        nameSpan.classList.add('marquee-anim');
+                    }
+                }, 50);
             }
-            if (isLeaderMode) { document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block'); }
+            
+            if (isLeaderMode) { 
+                document.querySelectorAll('.kick-btn').forEach(btn => btn.style.display = 'inline-block'); 
+            }
         }
 
         window.kickPlayer = async function(element, nick, isStatic = true) {
