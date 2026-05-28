@@ -820,7 +820,14 @@
                 </div>
                 
                 <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Морское Звание:</div>
-                <div id="infoRank" style="font-family: 'Oswald', sans-serif; font-size: 15px; color: #fff; margin-bottom: 15px;">-</div>
+                <div id="infoRankText" style="font-family: 'Oswald', sans-serif; font-size: 15px; color: #fff; margin-bottom: 15px;">-</div>
+                
+                <div id="infoRankEditWrapper" style="display: none; margin-bottom: 15px; position: relative;">
+                    <select id="infoRankSelect" style="background: #02050a; color: #00f2fe; border: 1px dashed #00f2fe; border-radius: 4px; padding: 5px; font-family: 'Oswald', sans-serif; font-size: 14px; width: 100%; outline: none; text-align: center; appearance: none; cursor: pointer;">
+                        <option value="">Автоматически (по выслуге)</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 10px; top: 10px; color: #00f2fe; pointer-events: none; font-size: 12px;"></i>
+                </div>
 
                 <div class="status-btn-group" id="adminStatusButtons">
                     <button type="button" class="btn-status legend" onclick="assignPlayerStatus('legend')">Легенда</button>
@@ -881,14 +888,9 @@
                     <div class="cabinet-info-item"><span class="lbl">Ранг Штаба:</span><span class="val" id="cabRank">-</span></div>
                     <div class="cabinet-info-item"><span class="lbl">Дата призыва:</span><span class="val" id="cabDate">-</span></div>
                     
-                    <div class="cabinet-info-item" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(168,85,247,0.3); flex-direction: column; gap: 8px;">
-                        <div style="display: flex; justify-content: space-between; width: 100%;">
-                            <span class="lbl" style="color:#00f2fe;">Морское Звание:</span>
-                            <span class="val rank-highlight" id="cabRole">-</span>
-                        </div>
-                        <select id="manualRankSelect" style="background: #02050a; color: #00f2fe; border: 1px solid rgba(0,242,254,0.3); border-radius: 4px; padding: 5px; font-family: 'Oswald', sans-serif; font-size: 12px; width: 100%; outline: none;">
-                            <option value="">Автоматически (раз в месяц)</option>
-                            </select>
+                    <div class="cabinet-info-item">
+                        <span class="lbl">Морское Звание:</span>
+                        <span class="val rank-highlight" id="cabRole">-</span>
                     </div>
 
                 </div>
@@ -1357,7 +1359,6 @@
             let joinDateStr = "С 26.05.2026 г.";
             let rank = "Участник клана";
             let roleTitle = "Юнга"; 
-            let manualRankValue = "";
             
             if (isLeaderMode || cleanTg === "@bymitso" || cleanTg.includes("admin")) {
                 nick = "Mitso";
@@ -1385,7 +1386,6 @@
                 
                 if (meta.manualRank) {
                     roleTitle = meta.manualRank;
-                    manualRankValue = meta.manualRank;
                 }
             } else if (APPROVED_TELEGRAMS.map(t => t.toLowerCase()).includes(cleanTg)) {
                 if (cleanTg === "@mr_joker017") nick = "Mr. JOKER";
@@ -1411,7 +1411,6 @@
             document.getElementById('cabRank').textContent = rank;
             document.getElementById('cabDate').textContent = joinDateStr;
             document.getElementById('cabRole').textContent = roleTitle;
-            document.getElementById('manualRankSelect').value = manualRankValue;
 
             const savedAvatar = localStorage.getItem('stage_user_avatar');
             const mainAva = document.getElementById('cabAvatarMain');
@@ -1864,9 +1863,16 @@
             if (diffMonths < 0) diffMonths = 0;
             if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
             
+            const rankText = document.getElementById('infoRankText');
+            const rankEditWrapper = document.getElementById('infoRankEditWrapper');
+            const rankSelect = document.getElementById('infoRankSelect');
+
             if (nick === 'Mitso') {
                 idInput.value = "22E9E4E8CABB7FCF";
-                document.getElementById('infoRank').textContent = "Адмирал флота (Глава)";
+                rankText.textContent = "Адмирал флота (Глава)";
+                rankText.style.display = 'block';
+                rankEditWrapper.style.display = 'none';
+                
                 let ava = 'none';
                 if (cloudDatabase.metadata['@bymitso'] && cloudDatabase.metadata['@bymitso'].avatar) {
                     ava = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
@@ -1876,17 +1882,37 @@
                 if (playerMeta) {
                     idInput.value = playerMeta.gameId || "Не указан";
                     
-                    if (playerMeta.manualRank) {
-                        document.getElementById('infoRank').textContent = playerMeta.manualRank;
+                    let currentRank = playerMeta.manualRank || NAVAL_RANKS[diffMonths];
+                    rankText.textContent = currentRank;
+
+                    // Если режим лидера - показываем селектор вместо текста
+                    if (isLeaderMode) {
+                        rankText.style.display = 'none';
+                        rankEditWrapper.style.display = 'block';
+                        rankSelect.value = playerMeta.manualRank || "";
+                        
+                        // Сохранение звания в базу при выборе
+                        rankSelect.onchange = async function() {
+                            const selectedRank = this.value;
+                            if (selectedRank) {
+                                playerMeta.manualRank = selectedRank;
+                            } else {
+                                delete playerMeta.manualRank;
+                            }
+                            await saveToCloud();
+                        };
                     } else {
-                        document.getElementById('infoRank').textContent = NAVAL_RANKS[diffMonths];
+                        rankText.style.display = 'block';
+                        rankEditWrapper.style.display = 'none';
                     }
 
                     const ava = playerMeta.avatar || ''; 
                     document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
                 } else {
                     idInput.value = "Скрыт";
-                    document.getElementById('infoRank').textContent = "Юнга";
+                    rankText.textContent = "Юнга";
+                    rankText.style.display = 'block';
+                    rankEditWrapper.style.display = 'none';
                     document.getElementById('infoAvatar').style.backgroundImage = "none";
                 }
             }
@@ -2163,37 +2189,16 @@
             } else { alert("Ошибка: Не удалось найти тактическую доску на странице."); }
         }
 
-        // Заполнение выпадающего списка званиями
-        const manualRankSelect = document.getElementById('manualRankSelect');
-        NAVAL_RANKS.forEach(rank => {
-            const opt = document.createElement('option');
-            opt.value = rank;
-            opt.textContent = rank;
-            manualRankSelect.appendChild(opt);
-        });
-
-        // Обработка ручного изменения звания
-        manualRankSelect.addEventListener('change', async function() {
-            let sessionTg = localStorage.getItem('stage_user_registered_tg') || "";
-            let cleanTg = sessionTg.trim().toLowerCase();
-            
-            if (cleanTg && cloudDatabase.metadata[cleanTg]) {
-                const selectedRank = this.value;
-                if (selectedRank) {
-                    cloudDatabase.metadata[cleanTg].manualRank = selectedRank;
-                    document.getElementById('cabRole').textContent = selectedRank;
-                } else {
-                    delete cloudDatabase.metadata[cleanTg].manualRank;
-                    let meta = cloudDatabase.metadata[cleanTg];
-                    let diffMs = Date.now() - (meta.joinDate || FOUNDATION_DATE.getTime());
-                    let diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.4375));
-                    if (diffMonths < 0) diffMonths = 0;
-                    if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
-                    document.getElementById('cabRole').textContent = NAVAL_RANKS[diffMonths];
-                }
-                await saveToCloud();
-            }
-        });
+        // Заполнение выпадающего списка званиями в карточке игрока
+        const infoRankSelect = document.getElementById('infoRankSelect');
+        if (infoRankSelect) {
+            NAVAL_RANKS.forEach(rank => {
+                const opt = document.createElement('option');
+                opt.value = rank;
+                opt.textContent = rank;
+                infoRankSelect.appendChild(opt);
+            });
+        }
     </script>
 </body>
 </html>
