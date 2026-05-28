@@ -672,7 +672,7 @@
                     <div class="player-card leader" data-nick="Mitso" onclick="showPlayerInfo('Mitso')">
                         <div class="name-wrapper">
                             <div class="roster-avatar" style="background-image: none;"></div>
-                            <span>Mitso</span>
+                            <span>Mitso<i class="fa-solid fa-chess-knight" title="Тактик" style="font-size: 14px; margin-left: 6px; color: #a855f7;"></i></span>
                         </div>
                         <span class="tag">Глава</span>
                     </div>
@@ -1013,6 +1013,15 @@
             "Капитан 3 ранга", "Капитан 2 ранга", "Капитан 1 ранга",
             "Контр-адмирал", "Вице-адмирал", "Адмирал", "Адмирал флота"
         ];
+
+        const SPEC_ICONS = {
+            "Универсальный": '<i class="fa-solid fa-infinity" title="Универсальный" style="font-size: 14px; margin-left: 6px; color: #00f2fe;"></i>',
+            "Дуэлянт": '<i class="fa-solid fa-crosshairs" title="Дуэлянт" style="font-size: 14px; margin-left: 6px; color: #ff0055;"></i>',
+            "Тактик": '<i class="fa-solid fa-chess-knight" title="Тактик" style="font-size: 14px; margin-left: 6px; color: #a855f7;"></i>',
+            "Авиковод": '<i class="fa-solid fa-plane" title="Авиковод" style="font-size: 14px; margin-left: 6px; color: #00f2fe;"></i>',
+            "Техник": '<i class="fa-solid fa-wrench" title="Техник" style="font-size: 14px; margin-left: 6px; color: #eab308;"></i>',
+            "Поддержка": '<i class="fa-solid fa-handshake-angle" title="Поддержка" style="font-size: 14px; margin-left: 6px; color: #22c55e;"></i>'
+        };
 
         let views = parseInt(localStorage.getItem('stage_views') || '0');
         let isUnique = localStorage.getItem('stage_unique_user');
@@ -1389,7 +1398,7 @@
                 nick = "Mitso";
                 rank = "Глава";
                 roleTitle = "Адмирал флота";
-                specialization = "Универсальный";
+                specialization = "Тактик";
                 joinDateStr = "С 26.05.2026 г.";
                 gameId = "22E9E4E8CABB7FCF";
             } else if (cleanTg && cloudDatabase.metadata[cleanTg]) {
@@ -1907,7 +1916,7 @@
                 rankText.style.display = 'block';
                 rankEditWrapper.style.display = 'none';
 
-                specText.textContent = "Универсальный";
+                specText.textContent = "Тактик";
                 specText.style.display = 'block';
                 specEditWrapper.style.display = 'none';
                 
@@ -2098,12 +2107,14 @@
                 let avatarStyle = "";
                 let isMe = false;
                 let customStatusClass = "";
+                let userSpec = "Не назначена";
                 
                 for (let tgKey in cloudDatabase.metadata) {
                     if (cloudDatabase.metadata[tgKey].nick === nick) {
                         if (tgKey === myRegisteredTg) isMe = true;
                         if (cloudDatabase.metadata[tgKey].customStatus === 'legend') customStatusClass = "status-legend";
                         if (cloudDatabase.metadata[tgKey].customStatus === 'hero') customStatusClass = "status-hero";
+                        userSpec = cloudDatabase.metadata[tgKey].specialization || "Не назначена";
                     }
                 }
 
@@ -2117,13 +2128,14 @@
                     }
                 }
                 
+                const specIconHtml = SPEC_ICONS[userSpec] || '';
                 const tagHtml = (now - approveTime < tenMinutesInMs) ? `<span class="tag">Новобранец</span>` : '';
                 
                 card.className = `player-card new-recruit-dynamic ${customStatusClass}`;
                 card.innerHTML = `
                     <div class="name-wrapper">
                         <div class="roster-avatar" ${avatarStyle}></div>
-                        <span>${nick}</span>
+                        <span>${nick}${specIconHtml}</span>
                     </div>
                     ${tagHtml}
                     <i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}', false)"></i>
