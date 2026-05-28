@@ -169,14 +169,6 @@
             97% { text-shadow: 0 0 20px #00f2fe; transform: skew(0deg); }
         }
 
-        @keyframes cyberGlitch {
-            0%, 100% { text-shadow: 0 0 20px #00f2fe; transform: skew(0deg); }
-            94% { text-shadow: 0 0 20px #00f2fe; transform: skew(0deg); }
-            95% { text-shadow: 4px 0px #ff0055, -4px 0px #00f2fe; transform: skew(-10deg); }
-            96% { text-shadow: -4px 0px #ff0055, 4px 0px #00f2fe; transform: skew(10deg); }
-            97% { text-shadow: 0 0 20px #00f2fe; transform: skew(0deg); }
-        }
-
         @keyframes slowFlicker {
             0%, 100% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
             48% { text-shadow: 0 0 35px #00f2fe, 0 0 15px #00f2fe; opacity: 1; }
@@ -299,6 +291,8 @@
         .player-card .roster-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0, 242, 254, 0.5); background-size: cover; background-position: center; flex-shrink: 0; background-color: #050b14; }
         .player-card.leader { border-left-color: #00f2fe; background: rgba(15, 23, 42, 0.85); }
         .player-card .tag { font-size: 11px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; font-weight: 900; background: #00f2fe; color: #02050a; box-shadow: 0 0 10px #00f2fe; margin-left: 8px; flex-shrink: 0; }
+        
+        .player-card .spec-icon { font-size: 14px; margin-left: 8px; flex-shrink: 0; display: flex; align-items: center; filter: drop-shadow(0 0 8px currentColor); }
 
         /* --- СТАТУСЫ ИГРОКОВ (ЛЕГЕНДА И ГЕРОЙ) --- */
         .player-card.status-legend {
@@ -343,7 +337,7 @@
 
         .secret-tg-box { display: none; width: 100%; max-width: 500px; margin-top: 25px; text-align: center; background: rgba(0, 242, 254, 0.1); border: 2px solid #00f2fe; border-radius: 6px; padding: 20px; box-shadow: 0 0 25px rgba(0, 242, 254, 0.2); position: relative; }
         .secret-tg-box p { font-family: 'Orbitron', sans-serif; font-size: 16px; color: #fff; margin-bottom: 15px; letter-spacing: 1px; }
-        .btn-reset-auth { display: block; background: none; border: none; color: rgba(255, 255, 255, 0.3); font-size: 11px; text-decoration: underline; cursor: margin-top: 15px; font-family: inherit; width: 100%; text-align: center; transition: color 0.2s; }
+        .btn-reset-auth { display: block; background: none; border: none; color: rgba(255, 255, 255, 0.3); font-size: 11px; text-decoration: underline; cursor: pointer; margin-top: 15px; font-family: inherit; width: 100%; text-align: center; transition: color 0.2s; }
         .btn-reset-auth:hover { color: #ff0055; }
 
         .btn-join-neon {
@@ -845,6 +839,21 @@
                     <i class="fa-solid fa-chevron-down" style="position: absolute; right: 10px; top: 10px; color: #00f2fe; pointer-events: none; font-size: 12px;"></i>
                 </div>
 
+                <div style="color: #a855f7; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; margin-top: 5px;">Специализация:</div>
+                <div id="infoSpecText" style="font-family: 'Oswald', sans-serif; font-size: 15px; color: #fff; margin-bottom: 15px;">-</div>
+
+                <div id="infoSpecEditWrapper" style="display: none; margin-bottom: 15px; position: relative;">
+                    <select id="infoSpecSelect" style="background: #02050a; color: #00f2fe; border: 1px dashed #00f2fe; border-radius: 4px; padding: 5px; font-family: 'Oswald', sans-serif; font-size: 14px; width: 100%; outline: none; text-align: center; appearance: none; cursor: pointer;">
+                        <option value="">Не назначена</option>
+                        <option value="Дуэлянт">Дуэлянт</option>
+                        <option value="Тактик">Тактик</option>
+                        <option value="Авиковод">Авиковод</option>
+                        <option value="Техник">Техник</option>
+                        <option value="Поддержка">Поддержка</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 10px; top: 10px; color: #00f2fe; pointer-events: none; font-size: 12px;"></i>
+                </div>
+
                 <div class="status-btn-group" id="adminStatusButtons">
                     <button type="button" class="btn-status legend" onclick="assignPlayerStatus('legend')">Легенда</button>
                     <button type="button" class="btn-status hero" onclick="assignPlayerStatus('hero')">Герой</button>
@@ -907,6 +916,11 @@
                     <div class="cabinet-info-item">
                         <span class="lbl">Морское Звание:</span>
                         <span class="val rank-highlight" id="cabRole">-</span>
+                    </div>
+                    
+                    <div class="cabinet-info-item">
+                        <span class="lbl">Специализация:</span>
+                        <span class="val" id="cabSpec">-</span>
                     </div>
 
                 </div>
@@ -981,6 +995,23 @@
         const TRAINING_THREAD_ID = 1;
         const FOUNDATION_DATE = new Date("2026-05-26T00:00:00"); 
 
+        const NAVAL_RANKS = [
+            "Юнга", "Матрос", "Старший матрос",
+            "Старшина 2 статьи", "Старшина 1 статьи", "Главный старшина", "Главный корабельный старшина",
+            "Мичман", "Старший мичман",
+            "Младший лейтенант", "Лейтенант", "Старший лейтенант", "Капитан-лейтенант",
+            "Капитан 3 ранга", "Капитан 2 ранга", "Капитан 1 ранга",
+            "Контр-адмирал", "Вице-адмирал", "Адмирал", "Адмирал флота"
+        ];
+
+        const SPECIALIZATION_ICONS = {
+            "Дуэлянт": "<i class='fa-solid fa-crosshairs' style='color: #ef4444;'></i>",
+            "Тактик": "<i class='fa-solid fa-chess-knight' style='color: #a855f7;'></i>",
+            "Авиковод": "<i class='fa-solid fa-plane-up' style='color: #00f2fe;'></i>",
+            "Техник": "<i class='fa-solid fa-wrench' style='color: #eab308;'></i>",
+            "Поддержка": "<i class='fa-solid fa-shield-heart' style='color: #22c55e;'></i>"
+        };
+
         // --- НАСТРОЙКИ SUPABASE ---
         const SUPABASE_URL = "https://noxmicgoosxoqderhgdp.supabase.co/rest/v1/"; 
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5veG1pY2dvb3N4b3FkZXJoZ2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MzM0MjMsImV4cCI6MjA5NTMwOTQyM30.IT09ObziuiZtrLZLgwryCgRX7shN8B3nb9HWqjeGZRA";
@@ -996,15 +1027,6 @@
         };
 
         const APPROVED_TELEGRAMS = ["@bymitso", "@banan4uks", "@Dark_ControI", "@saveliy_li", "@Mr_JOKER017"];
-
-        const NAVAL_RANKS = [
-            "Юнга", "Матрос", "Старший матрос",
-            "Старшина 2 статьи", "Старшина 1 статьи", "Главный старшина", "Главный корабельный старшина",
-            "Мичман", "Старший мичман",
-            "Младший лейтенант", "Лейтенант", "Старший лейтенант", "Капитан-лейтенант",
-            "Капитан 3 ранга", "Капитан 2 ранга", "Капитан 1 ранга",
-            "Контр-адмирал", "Вице-адмирал", "Адмирал", "Адмирал флота"
-        ];
 
         let views = parseInt(localStorage.getItem('stage_views') || '0');
         let isUnique = localStorage.getItem('stage_unique_user');
@@ -1280,7 +1302,8 @@
                 chatId: currentParsedData.chatId,
                 joinDate: registerTimestamp,
                 rank: "Действующий боец",
-                avatar: "" 
+                avatar: "",
+                specialization: ""
             };
             
             cloudDatabase.banned = cloudDatabase.banned.filter(tg => tg !== targetTgKey);
@@ -1375,6 +1398,7 @@
             let joinDateStr = "С 26.05.2026 г.";
             let rank = "Участник клана";
             let roleTitle = "Юнга"; 
+            let specialization = "Не назначена";
             
             if (isLeaderMode || cleanTg === "@bymitso" || cleanTg.includes("admin")) {
                 nick = "Mitso";
@@ -1382,12 +1406,15 @@
                 roleTitle = "Адмирал флота";
                 joinDateStr = "С 26.05.2026 г.";
                 gameId = "22E9E4E8CABB7FCF";
+                specialization = "Универсал";
             } else if (cleanTg && cloudDatabase.metadata[cleanTg]) {
                 let meta = cloudDatabase.metadata[cleanTg];
                 nick = meta.nick || nick;
                 tgId = meta.chatId || tgId;
                 gameId = meta.gameId || gameId;
                 rank = meta.rank || rank;
+                specialization = meta.specialization || specialization;
+
                 if (meta.joinDate) {
                     let d = new Date(meta.joinDate);
                     if (d < FOUNDATION_DATE) d = FOUNDATION_DATE;
@@ -1413,11 +1440,13 @@
                 rank = "Высший совет клана";
                 roleTitle = "Адмирал флота";
                 joinDateStr = "С 26.05.2026 г.";
+                specialization = "Универсал";
             } else if (localStorage.getItem('stage_team_logged') === 'true' && !sessionTg) {
                 nick = "Ветеран флота";
                 rank = "Почетный участник";
                 roleTitle = "Адмирал флота";
                 joinDateStr = "С 26.05.2026 г.";
+                specialization = "Универсал";
             }
 
             document.getElementById('cabNick').textContent = nick;
@@ -1427,6 +1456,13 @@
             document.getElementById('cabRank').textContent = rank;
             document.getElementById('cabDate').textContent = joinDateStr;
             document.getElementById('cabRole').textContent = roleTitle;
+
+            let cabSpecElem = document.getElementById('cabSpec');
+            if (SPECIALIZATION_ICONS[specialization]) {
+                cabSpecElem.innerHTML = `${SPECIALIZATION_ICONS[specialization]} <span style="color:#fff; font-family:'Orbitron', sans-serif;">${specialization}</span>`;
+            } else {
+                cabSpecElem.textContent = specialization;
+            }
 
             const savedAvatar = localStorage.getItem('stage_user_avatar');
             const mainAva = document.getElementById('cabAvatarMain');
@@ -1689,7 +1725,7 @@
                 localStorage.setItem('stage_user_registered_tg', "@bymitso");
                 
                 if (!cloudDatabase.metadata["@bymitso"]) {
-                    cloudDatabase.metadata["@bymitso"] = { nick: "Mitso", gameId: "22E9E4E8CABB7FCF", joinDate: FOUNDATION_DATE.getTime(), rank: "Глава", avatar: "" };
+                    cloudDatabase.metadata["@bymitso"] = { nick: "Mitso", gameId: "22E9E4E8CABB7FCF", joinDate: FOUNDATION_DATE.getTime(), rank: "Глава", avatar: "", specialization: "Универсал" };
                     saveToCloud();
                 }
             }
@@ -1862,6 +1898,14 @@
             const idInput = document.getElementById('infoGameIdInput');
             const editIcon = document.getElementById('editIdIcon');
             
+            const rankText = document.getElementById('infoRankText');
+            const rankEditWrapper = document.getElementById('infoRankEditWrapper');
+            const rankSelect = document.getElementById('infoRankSelect');
+
+            const specText = document.getElementById('infoSpecText');
+            const specEditWrapper = document.getElementById('infoSpecEditWrapper');
+            const specSelect = document.getElementById('infoSpecSelect');
+            
             let playerMeta = null;
             for (let tg in cloudDatabase.metadata) {
                 if (cloudDatabase.metadata[tg].nick === nick) {
@@ -1879,16 +1923,17 @@
             if (diffMonths < 0) diffMonths = 0;
             if (diffMonths >= NAVAL_RANKS.length) diffMonths = NAVAL_RANKS.length - 1;
             
-            const rankText = document.getElementById('infoRankText');
-            const rankEditWrapper = document.getElementById('infoRankEditWrapper');
-            const rankSelect = document.getElementById('infoRankSelect');
-
             if (nick === 'Mitso') {
                 idInput.value = "22E9E4E8CABB7FCF";
+                
                 rankText.textContent = "Адмирал флота (Глава)";
                 rankText.style.display = 'block';
                 rankEditWrapper.style.display = 'none';
                 
+                specText.textContent = "Универсал";
+                specText.style.display = 'block';
+                specEditWrapper.style.display = 'none';
+
                 let ava = 'none';
                 if (cloudDatabase.metadata['@bymitso'] && cloudDatabase.metadata['@bymitso'].avatar) {
                     ava = `url('${cloudDatabase.metadata['@bymitso'].avatar}')`;
@@ -1901,13 +1946,18 @@
                     let currentRank = playerMeta.manualRank || NAVAL_RANKS[diffMonths];
                     rankText.textContent = currentRank;
 
-                    // Если режим лидера - показываем селектор вместо текста
+                    let currentSpec = playerMeta.specialization || "Не назначена";
+                    let currentSpecHtml = SPECIALIZATION_ICONS[currentSpec] ? `${SPECIALIZATION_ICONS[currentSpec]} ${currentSpec}` : currentSpec;
+
                     if (isLeaderMode) {
                         rankText.style.display = 'none';
                         rankEditWrapper.style.display = 'block';
                         rankSelect.value = playerMeta.manualRank || "";
                         
-                        // Сохранение звания в базу при выборе
+                        specText.style.display = 'none';
+                        specEditWrapper.style.display = 'block';
+                        specSelect.value = playerMeta.specialization || "";
+                        
                         rankSelect.onchange = async function() {
                             const selectedRank = this.value;
                             if (selectedRank) {
@@ -1917,18 +1967,39 @@
                             }
                             await saveToCloud();
                         };
+                        
+                        specSelect.onchange = async function() {
+                            const selectedSpec = this.value;
+                            if (selectedSpec) {
+                                playerMeta.specialization = selectedSpec;
+                            } else {
+                                delete playerMeta.specialization;
+                            }
+                            await saveToCloud();
+                            renderLocalRecruits(); 
+                        };
                     } else {
                         rankText.style.display = 'block';
                         rankEditWrapper.style.display = 'none';
+                        
+                        specText.innerHTML = currentSpecHtml;
+                        specText.style.display = 'block';
+                        specEditWrapper.style.display = 'none';
                     }
 
                     const ava = playerMeta.avatar || ''; 
                     document.getElementById('infoAvatar').style.backgroundImage = ava ? `url('${ava}')` : 'none';
                 } else {
                     idInput.value = "Скрыт";
+                    
                     rankText.textContent = "Юнга";
                     rankText.style.display = 'block';
                     rankEditWrapper.style.display = 'none';
+                    
+                    specText.textContent = "Не назначена";
+                    specText.style.display = 'block';
+                    specEditWrapper.style.display = 'none';
+                    
                     document.getElementById('infoAvatar').style.backgroundImage = "none";
                 }
             }
@@ -2052,12 +2123,18 @@
                 let avatarStyle = "";
                 let isMe = false;
                 let customStatusClass = "";
+                let specHtml = "";
                 
                 for (let tgKey in cloudDatabase.metadata) {
                     if (cloudDatabase.metadata[tgKey].nick === nick) {
                         if (tgKey === myRegisteredTg) isMe = true;
                         if (cloudDatabase.metadata[tgKey].customStatus === 'legend') customStatusClass = "status-legend";
                         if (cloudDatabase.metadata[tgKey].customStatus === 'hero') customStatusClass = "status-hero";
+                        
+                        if (cloudDatabase.metadata[tgKey].specialization && SPECIALIZATION_ICONS[cloudDatabase.metadata[tgKey].specialization]) {
+                            let specName = cloudDatabase.metadata[tgKey].specialization;
+                            specHtml = `<div class="spec-icon" title="${specName}">${SPECIALIZATION_ICONS[specName]}</div>`;
+                        }
                     }
                 }
 
@@ -2078,6 +2155,7 @@
                     <div class="name-wrapper">
                         <div class="roster-avatar" ${avatarStyle}></div>
                         <span>${nick}</span>
+                        ${specHtml}
                     </div>
                     ${tagHtml}
                     <i class="fa-solid fa-xmark kick-btn" onclick="kickPlayer(this, '${nick}', false)"></i>
@@ -2205,16 +2283,6 @@
             } else { alert("Ошибка: Не удалось найти тактическую доску на странице."); }
         }
 
-        // Заполнение выпадающего списка званиями в карточке игрока
-        const infoRankSelect = document.getElementById('infoRankSelect');
-        if (infoRankSelect) {
-            NAVAL_RANKS.forEach(rank => {
-                const opt = document.createElement('option');
-                opt.value = rank;
-                opt.textContent = rank;
-                infoRankSelect.appendChild(opt);
-            });
-        }
     </script>
 </body>
 </html>
