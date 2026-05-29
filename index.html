@@ -2334,8 +2334,10 @@ Telegram ID;
 
         const openLawModal = () => lawModalOverlay.classList.add('active');
         const closeLawModal = () => lawModalOverlay.classList.remove('active');
-        openLawBtn.addEventListener('click', openLawModal); navLawBtn.addEventListener('click', openLawModal);
-        closeLawModalBtn.classList.add('close-btn'); acceptLawBtn.addEventListener('click', closeLawModal);
+        openLawBtn.addEventListener('click', openLawModal); 
+        navLawBtn.addEventListener('click', openLawModal);
+        closeLawModalBtn.addEventListener('click', closeLawModal); 
+        acceptLawBtn.addEventListener('click', closeLawModal);
 
         toggleFullscreenBtn.addEventListener('click', () => {
             const isCurrentlyFullscreen = boardContainer.classList.contains('fullscreen-active');
