@@ -533,6 +533,61 @@
         .btn-terminal-accept { flex: 1; padding: 8px; background: #22c55e; border: none; font-family: 'Orbitron', sans-serif; font-weight: 900; color: #000; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 12px; text-align: center; }
         .btn-terminal-reject { flex: 1; padding: 8px; background: #ef4444; border: none; font-family: 'Orbitron', sans-serif; font-weight: 900; color: #fff; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 12px; text-align: center; }
 
+        /* --- ЭФФЕКТ ИСКР --- */
+        #sparksCanvas {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            pointer-events: none; /* Чтобы не мешать кликам */
+            z-index: 5; /* Поверх фона, но под навигацией (nav = z-index: 10) */
+        }
+
+        /* --- ЭКРАН ЗАГРУЗКИ (BOOT SEQUENCE) --- */
+        #bootScreen {
+            position: fixed;
+            inset: 0;
+            background-color: #02050a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 50px 30px;
+            font-family: 'Orbitron', monospace; /* Поддерживаем стилистику сайта */
+            color: #22c55e;
+            text-shadow: 0 0 8px #22c55e;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s;
+        }
+        #bootScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .terminal-line {
+            font-size: clamp(14px, 3vw, 18px);
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: typeLine 0.1s forwards;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .terminal-line.granted {
+            color: #00f2fe;
+            text-shadow: 0 0 15px #00f2fe;
+            font-size: clamp(22px, 5vw, 30px);
+            font-weight: 900;
+            margin-top: 25px;
+            animation: pulseText 1s infinite alternate, typeLine 0.1s forwards;
+        }
+        @keyframes typeLine {
+            to { opacity: 1; }
+        }
+        @keyframes pulseText {
+            from { text-shadow: 0 0 10px #00f2fe; }
+            to { text-shadow: 0 0 25px #00f2fe, 0 0 10px #00f2fe; }
+        }
+
         @media (max-width: 768px) {
             .nav-bar { 
                 top: auto; 
@@ -596,6 +651,12 @@
     </style>
 </head>
 <body>
+
+    <canvas id="sparksCanvas"></canvas>
+
+    <div id="bootScreen">
+        <div class="terminal-content" id="terminalContent"></div>
+    </div>
 
     <nav class="nav-bar">
         <div class="nav-links-left">
@@ -930,7 +991,27 @@
             <div class="law-window-content">
                 <p>Клан STAGE является некоммерческим добровольным объединением игроков Modern Warships.</p>
                 <h4>1. Принцип добровольности</h4>
-                <p>Пользователь предоставляет свой публичный Игровой ID и контакт Telegram добровольно для верификации профиля.</p>
+                <p>Согласие с условиями регистрации
+
+Регистрируясь на сайте клана, пользователь добровольно предоставляет следующие данные:
+
+Telegram username (тег Telegram);
+Telegram ID;
+игровой ID;
+игровой никнейм.
+
+Пользователь даёт согласие администрации сайта на хранение, обработку и использование указанных данных исключительно в целях:
+
+обработки заявок на вступление в клан;
+работы Telegram-бота;
+отправки уведомлений;
+отображения информации об участниках клана на сайте и в служебных Telegram-группах клана.
+
+Предоставленные данные не используются в коммерческих целях и не передаются третьим лицам, за исключением случаев, предусмотренных законодательством Российской Федерации.
+
+Пользователь вправе в любой момент запросить удаление своих данных через администрацию сайта.
+
+Продолжая регистрацию, пользователь подтверждает согласие с настоящими условиями.</p>
             </div>
             <button type="button" class="btn-submit" id="acceptLawBtn" style="background: #a855f7; color: #fff; margin-top: 15px;">Ясно, вернуться</button>
         </div>
@@ -2272,6 +2353,126 @@
                 infoRankSelect.appendChild(opt);
             });
         }
+
+        // --- ДИНАМИЧЕСКИЕ ИСКРЫ (ФИОЛЕТОВЫЙ И ОРАНЖЕВЫЙ) ---
+        const canvas = document.getElementById('sparksCanvas');
+        const ctx = canvas.getContext('2d');
+        let sparks = [];
+
+        function resizeSparksCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeSparksCanvas);
+        resizeSparksCanvas();
+
+        class Spark {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100; // Появляются снизу
+                this.size = Math.random() * 2 + 0.5; // Размер искр
+                this.speedY = Math.random() * -1.5 - 0.5; // Плывут вверх
+                this.speedX = Math.random() * 1.5 - 0.75; // Дрейфуют по горизонтали
+                this.life = Math.random() * 0.6 + 0.4; // Непрозрачность
+                this.color = Math.random() > 0.5 ? '#a855f7' : '#ff8c00'; // Случайный цвет (Фиолетовый / Оранжевый)
+                this.fadeRate = Math.random() * 0.003 + 0.001; // Скорость затухания
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.life -= this.fadeRate;
+                // Если искра погасла или улетела за верхний край - перезапускаем снизу
+                if (this.life <= 0 || this.y < -10) {
+                    this.reset();
+                    this.y = canvas.height + 10;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = Math.max(0, this.life);
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // Создаем 35 искр для баланса визуала и производительности
+        for (let i = 0; i < 35; i++) { sparks.push(new Spark()); }
+
+        function animateSparks() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            sparks.forEach(spark => { spark.update(); spark.draw(); });
+            requestAnimationFrame(animateSparks);
+        }
+        animateSparks();
+
+        // --- ЭКРАН ЗАГРУЗКИ ТЕРМИНАЛА (BOOT SEQUENCE) ---
+        const bootScreen = document.getElementById('bootScreen');
+        const termContent = document.getElementById('terminalContent');
+        const bootLines = [
+            "Инициализация системы STAGE_OS v2.0...",
+            "Установка защищенного соединения...",
+            "Проверка протоколов безопасности...",
+            "Загрузка тактических карт флота...",
+            "Синхронизация с серверами авторизации...",
+            "ДОСТУП РАЗРЕШЕН"
+        ];
+
+        // Синтез звука "технологичного подтверждения" (Audio API, не требует внешних MP3 файлов)
+        function playTerminalSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.05, ctx.currentTime); // Тихий, чтобы не пугать
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch(e) { console.warn("Аудио заблокировано браузером"); }
+        }
+
+        let bootLineIndex = 0;
+        function showNextBootLine() {
+            if (bootLineIndex < bootLines.length) {
+                const p = document.createElement('div');
+                p.className = 'terminal-line';
+                if (bootLineIndex === bootLines.length - 1) {
+                    p.classList.add('granted');
+                    // Пытаемся воспроизвести звук на надписи ДОСТУП РАЗРЕШЕН
+                    playTerminalSound(); 
+                }
+                p.textContent = bootLines[bootLineIndex];
+                termContent.appendChild(p);
+                bootLineIndex++;
+                
+                if (bootLineIndex === bootLines.length) {
+                    // Ждем 1.2 секунды после появления надписи и убираем экран
+                    setTimeout(() => { bootScreen.classList.add('hidden'); }, 1200);
+                } else {
+                    // Случайная задержка печати (от 150 до 450 мс) имитирует реальную прогрузку
+                    setTimeout(showNextBootLine, Math.random() * 300 + 150);
+                }
+            }
+        }
+        
+        // Запускаем терминал сразу после загрузки DOM
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(showNextBootLine, 300);
+        });
     </script>
 </body>
 </html>
